@@ -1,6 +1,8 @@
 import pandas as pd
-from torch.utils.data import Dataset
 import os
+
+from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
 
 path_to_data = "../../../lopezm/ML_projects/Projects_2022/Project_3/Data/dataframes/"
 
