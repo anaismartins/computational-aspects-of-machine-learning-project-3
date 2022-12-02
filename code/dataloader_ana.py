@@ -24,6 +24,7 @@ class Data(Dataset):
         """
         print(self.filename + str(self.data))
         
+        
 data = []
 i = 0
 
@@ -34,3 +35,5 @@ for filename in filenames:
         data.append(Data(filename, path_to_data))
     
 dataloader = DataLoader(data, batch_size=1, shuffle=True)
+
+print(dataloader)
