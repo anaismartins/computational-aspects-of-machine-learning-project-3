@@ -31,3 +31,4 @@ for filename in filenames:
     if ".csv" in filename:
         data.append(Data(filename, path_to_data))
     
+dataloader = DataLoader(data, batch_size=1, shuffle=True)
