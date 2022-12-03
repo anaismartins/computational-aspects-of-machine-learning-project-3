@@ -1,9 +1,8 @@
-import pandas as pd
 import os
 
 from torch.utils.data import DataLoader
 
-from dataloader_ana import LoadCSV
+from LoadCSV_ana import LoadCSV
 
 path_to_data = "../../../lopezm/ML_projects/Projects_2022/Project_3/Data/dataframes/" 
         
@@ -17,4 +16,3 @@ for filename in filenames:
         data.append(LoadCSV(filename, path_to_data))
     
 dataloader = DataLoader(data, batch_size=1, shuffle=True)
-

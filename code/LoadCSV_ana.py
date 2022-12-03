@@ -1,3 +1,7 @@
+# general modules
+import pandas as pd
+
+# torch
 from torch.utils.data import Dataset
 
 class LoadCSV(Dataset):
