@@ -11,13 +11,20 @@ class LoadCSV(Dataset):
 
     def __init__(self, filename, path_to_data):  
         """
-        initialize the data
+        runs when the object is created
         """   
         self.data = pd.read_csv(path_to_data + filename) 
         self.filename = str(filename)
-        
-    def print(self):
+
+    def __len__(self):
         """
-        print the data
+        returns the amount of samples in the data
+        """
+
+        return len(self.data)
+        
+    def __print__(self):
+        """
+        prints the data
         """
         print(self.filename + str(self.data))
