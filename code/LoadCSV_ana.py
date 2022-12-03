@@ -9,22 +9,23 @@ class LoadCSV(Dataset):
     class that reads and initializes the data
     """ 
 
-    def __init__(self, filename, path_to_data):  
+    def __init__(self, filename, path_to_data, classification):  
         """
         runs when the object is created
         """   
-        self.data = pd.read_csv(path_to_data + filename) 
-        self.filename = str(filename)
+        self.__data__ = pd.read_csv(path_to_data + filename) 
+        self.__filename__ = str(filename)
+        self.classification = classification
 
     def __len__(self):
         """
         returns the amount of samples in the data
         """
 
-        return len(self.data)
+        return len(self.__data__)
         
-    def __print__(self):
+    def print(self):
         """
         prints the data
         """
-        print(self.filename + str(self.data))
+        print(self.__filename__ + str(self.__data__))
