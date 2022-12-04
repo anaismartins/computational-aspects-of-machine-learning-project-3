@@ -21,8 +21,6 @@ for filename in filenames:
                     train_data.append(LoadCSV(filename, g.path_to_data, classification))
                 elif "O3b_old" in filename:
                     test_data.append(LoadCSV(filename, g.path_to_data, classification))
-
-print(train_data[0].classification)
     
 train_dataloader = DataLoader(train_data, batch_size = g.batch_size, shuffle = True)
 test_dataloader = DataLoader(test_data, batch_size = g.batch_size, shuffle = True)
