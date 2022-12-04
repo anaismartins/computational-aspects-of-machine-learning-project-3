@@ -39,8 +39,8 @@ class LoadCSV(Dataset):
 
         return len(self.__data)
         
-    def print(self):
+    def __str__(self):
         """
         prints the data
         """
-        print(str(self.__data))
+        return str(self.__data)

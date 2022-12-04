@@ -24,3 +24,5 @@ for filename in filenames:
     
 train_dataloader = DataLoader(train_data, batch_size = g.batch_size, shuffle = True)
 test_dataloader = DataLoader(test_data, batch_size = g.batch_size, shuffle = True)
+
+print(test_data[0])
