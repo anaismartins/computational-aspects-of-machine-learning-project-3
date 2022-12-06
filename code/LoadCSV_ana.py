@@ -1,5 +1,6 @@
 # general modules
 import pandas as pd
+import numpy as np
 
 # torch
 from torch.utils.data import Dataset
@@ -14,23 +15,33 @@ class LoadCSV(Dataset):
         runs when the object is created
         """   
         self.__data = pd.read_csv(path_to_data + filename) 
+        # the event ids might be messed up so we just sort it by event time
         self.__data = self.__data.sort_values(by = ["Event ID", "Event time"]) 
+        
+        self.__data = self.averaging()
+        
+        #averaged = pd.DataFrame()
 
-        self.__filename = str(filename)
-        self.classification = classification
+        #for event in self.__data["Event ID"]:
+        #    aux = self.__data[self.__data["Event ID"] == event].mean()
+
+        #    averaged = averaged.append(aux, ignore_index = True)
+
+        #self.__filename = str(filename)
+        #self.classification = classification
 
         # getting the individual columns
-        self.__unnammed = self.__data["Unnamed: 0"]
-        self.__trigger_id = self.__data["Trigger ID"]
-        self.__trigger_time = self.__data["Trigger time"]
-        self.__event_id = self.__data["Event ID"]
-        self.__event_time = self.__data["Event time"]
-        self.__snr = self.__data["SNR"]
-        self.__chisq = self.__data["Chisq"]
-        self.__mass_1 = self.__data["Mass_1"]
-        self.__mass_2 = self.__data["Mass_2"]
-        self.__spin1z = self.__data["Spin1z"]
-        self.__spin2z = self.__data["Spin2z"]
+        #self.unnammed = self.__data["Unnamed: 0"]
+        #self.trigger_id = self.__data["Trigger ID"]
+        #self.trigger_time = self.__data["Trigger time"]
+        #self.event_id = self.__data["Event ID"]
+        #self.event_time = self.__data["Event time"]
+        self.snr = self.__data[0]
+        self.chisq = self.__data[1]
+        self.mass_1 = self.__data[2]
+        self.mass_2 = self.__data[3]
+        self.spin1z = self.__data[4]
+        self.spin2z = self.__data[5]
 
     def __len__(self):
         """
@@ -43,4 +54,65 @@ class LoadCSV(Dataset):
         """
         prints the data
         """
-        return str(self.__data)
+        return (str(self.__data))
+    
+    def averaging(self):
+        blip_sorted = np.array(self.__data.sort_values(by = ['Event ID', 'Event time']).to_numpy())
+        event_amount = len(blip_sorted)
+
+        ev_snr = np.array([])
+        av_snr = np.array([])
+        ev_chisq = np.array([])
+        av_chisq = np.array([])
+        ev_m1 = np.array([])
+        av_m1 = np.array([])
+        ev_m2 = np.array([])
+        av_m2 = np.array([])
+        ev_s1 = np.array([])
+        av_s1 = np.array([])
+        ev_s2 = np.array([])
+        av_s2 = np.array([])
+        prev_evtime = blip_sorted[0][4]
+
+        for i in range(event_amount):
+            event_id = int(blip_sorted[i][3])
+
+            current_evtime = blip_sorted[i][4]
+            if current_evtime == prev_evtime:
+                ev_snr = np.append(ev_snr, blip_sorted[i][5])
+                ev_chisq = np.append(ev_chisq, blip_sorted[i][6])
+                ev_m1 = np.append(ev_m1, blip_sorted[i][7])
+                ev_m2 = np.append(ev_m2, blip_sorted[i][8])
+                ev_s1 = np.append(ev_s1, blip_sorted[i][9])
+                ev_s2 = np.append(ev_s2, blip_sorted[i][10])
+
+                #print('Appending event' ,current_evtime, 'm1', ev_m1)
+            else: 
+                if len(ev_snr) ==0:
+                    av_snr = np.append(av_snr, blip_sorted[i][5])
+                    av_chisq = np.append(av_chisq, blip_sorted[i][6])
+                    av_m1 = np.append(av_m1, blip_sorted[i][7])
+                    av_m2 = np.append(av_m2, blip_sorted[i][8])
+                    av_s1 = np.append(av_s1, blip_sorted[i][9])
+                    av_s2 = np.append(av_s2, blip_sorted[i][10])
+                else:
+                    av_snr = np.append(av_snr, np.average(ev_snr))
+                    av_chisq = np.append(av_chisq, np.average(ev_chisq))
+                    av_m1 = np.append(av_m1, np.average(ev_m1))
+                    av_m2 = np.append(av_m2, np.average(ev_m2))
+                    av_s1 = np.append(av_s1, np.average(ev_s1))
+                    av_s2 = np.append(av_s2, np.average(ev_s2))    
+
+                ev_snr = np.array([])
+                ev_chisq = np.array([])
+                ev_m1 = np.array([])
+                ev_m2 = np.array([])
+                ev_s1 = np.array([])
+                ev_s2 = np.array([])
+
+                #print('Event time', prev_evtime, 'SNR', av_snr, 'Chisq', av_chisq, 'M1', av_m1, 'M2', av_m2, 'S1', av_s1, 'S2', av_s2)
+                prev_evtime = current_evtime
+
+        triggers = (av_snr, av_chisq, av_m1, av_m2, av_s1, av_s2)
+                
+        return triggers
