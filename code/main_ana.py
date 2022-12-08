@@ -3,6 +3,8 @@ import os
 
 #torch
 from torch.utils.data import DataLoader
+import torch
+from torch import tensor
 
 # my modules
 from LoadCSV_ana import LoadCSV
@@ -32,5 +34,15 @@ for filename in filenames:
 #train_dataloader = DataLoader(train_data, batch_size = g.batch_size, shuffle = True)
 #test_dataloader = DataLoader(test_data, batch_size = g.batch_size, shuffle = True)
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"Using {device} device")
+
 model = NeuralNetwork().to(device)
 print(model)
+
+test_data = tensor([train_data_blip[0].snr, train_data_blip[0].chisq, train_data_blip[0].mass_1, train_data_blip[0].mass_2, train_data_blip[0].spin1z, train_data_blip[0].spin2z])
+
+logits = model(test_data)
+pred_probab = nn.Softmax(dim=0)(logits)
+y_pred = pred_probab.argmax(1)
+print(f"Predicted class: {y_pred}")

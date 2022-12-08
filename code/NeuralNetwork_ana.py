@@ -4,9 +4,7 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
         self.linear_relu = nn.Sequential(
-            nn.Linear(994, 100),
-            nn.ReLU(),
-            nn.Linear(100, 2),
+            nn.Linear(994, 2),
         )
 
     def forward(self, x):
