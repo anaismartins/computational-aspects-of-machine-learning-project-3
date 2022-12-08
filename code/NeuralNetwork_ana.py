@@ -3,4 +3,12 @@ from torch import nn
 class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
-        self.layer1 = nn.Linear()
+        self.linear_relu = nn.Sequential(
+            nn.Linear(994, 100),
+            nn.ReLU(),
+            nn.Linear(100, 2),
+        )
+
+    def forward(self, x):
+        logits = self.linear_relu(x)
+        return logits

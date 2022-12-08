@@ -54,7 +54,7 @@ class LoadCSV(Dataset):
         """
         prints the data
         """
-        return (str(self.__data))
+        return (str(self.snr))
     
     def averaging(self):
         blip_sorted = np.array(self.__data.sort_values(by = ['Event ID', 'Event time']).to_numpy())
