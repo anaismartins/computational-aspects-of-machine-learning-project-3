@@ -34,9 +34,9 @@ class LoadCSV(Dataset):
             aux = [self.snr[i], self.chisq[i], self.mass_1[i], self.mass_2[i], self.spin1z[i], self.spin2z[i]]
             self.dataset.append(aux)
             if classification == "Blip":
-                self.y.append([0, 1])
+                self.y.append(0)
             elif classification == "Injections":
-                self.y.append([1, 0])
+                self.y.append(1)
 
     def __len__(self):
         """
@@ -52,6 +52,9 @@ class LoadCSV(Dataset):
         return (str(self.snr))
     
     def averaging(self):
+        """
+        averages the data based on the event id
+        """
         blip_sorted = np.array(self.__data.sort_values(by = ['Event ID', 'Event time']).to_numpy())
         event_amount = len(blip_sorted)
 
@@ -80,8 +83,6 @@ class LoadCSV(Dataset):
                 ev_m2 = np.append(ev_m2, blip_sorted[i][8])
                 ev_s1 = np.append(ev_s1, blip_sorted[i][9])
                 ev_s2 = np.append(ev_s2, blip_sorted[i][10])
-
-                #print('Appending event' ,current_evtime, 'm1', ev_m1)
             else: 
                 if len(ev_snr) ==0:
                     av_snr = np.append(av_snr, blip_sorted[i][5])
@@ -105,7 +106,6 @@ class LoadCSV(Dataset):
                 ev_s1 = np.array([])
                 ev_s2 = np.array([])
 
-                #print('Event time', prev_evtime, 'SNR', av_snr, 'Chisq', av_chisq, 'M1', av_m1, 'M2', av_m2, 'S1', av_s1, 'S2', av_s2)
                 prev_evtime = current_evtime
 
         triggers = (av_snr, av_chisq, av_m1, av_m2, av_s1, av_s2)

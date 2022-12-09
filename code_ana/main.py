@@ -13,72 +13,56 @@ from torch.utils.data import TensorDataset, DataLoader
 # my modules
 import globals as g
 from LoadCSV import LoadCSV
+from Perceptron import Perceptron
 
+# loading the data
 blip = LoadCSV("Blip_H1_O3a.csv", g.path_to_data, "Blip")
 injection = LoadCSV("Injections_H1_O3a.csv", g.path_to_data, "Injections")
 
-all_data = blip.dataset
+# joining the data and preping it for the model
+X = blip.dataset
 y = blip.y
 
 for i in range(len(blip)):
-    all_data.append(injection.dataset[i])
+    X.append(injection.dataset[i])
     y.append(injection.y[i])
 
-all_data = torch.tensor(all_data, dtype=torch.float)
-y = torch.tensor(y, dtype=torch.float)
+X = torch.tensor(X, dtype=torch.float)
+y = torch.tensor(y, dtype=torch.long)
 
-X_train, X_test, y_train, y_test = train_test_split(all_data, y, train_size=0.8, random_state=42)
+# splitting the data into train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=42)
 
 train_data = TensorDataset(X_train, y_train)
 test_data = TensorDataset(X_test, y_test)
 
-train_dataloader = DataLoader(train_data, shuffle=True, batch_size=12)
-test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0]))
+train_dataloader = DataLoader(train_data, shuffle=True, batch_size=142) # 12 batches for the data size we have 
+test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
-n_datapoints = len(train_dataloader)
-
-model = nn.Sequential(
-    nn.Linear(6, 2),
-    nn.Softmax(dim=1)
-)
-
+# creating the model
+model = Perceptron()
 print(model)
 
-epochs = 5
-optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+# specifications for compiling the model
+epochs = 10
+train_accuracies, test_accuracies = [], []
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-def train_loop(dataloader, model, optimizer):
-    size = len(dataloader.dataset)
-    for batch, (X, y) in enumerate(dataloader):
-        # Compute prediction and loss
+# training and testing the model
+for epoch in range(epochs):
+    # training
+    for X, y in train_dataloader:
         pred = model(X)
-        l = nn.CrossEntropyLoss()(pred, y)
-
-        # Backpropagation
+        pred_labels = torch.argmax(pred, axis=1)
+        loss = loss_fn(pred, y)
         optimizer.zero_grad()
-        l.backward()
+        loss.backward()
         optimizer.step()
+    train_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
 
-        if batch % 100 == 0:
-            loss, current = l.item(), batch * len(X)
-            print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
-
-def test_loop(dataloader, model):
-    size = len(dataloader.dataset)
-    num_batches = len(dataloader)
-    test_loss, correct = 0, 0
-    with torch.no_grad():
-        for X, y in dataloader:
-            pred = model(X)
-            test_loss += nn.CrossEntropyLoss()(pred, y).item()
-            #correct += (pred.argmax(1) == y).type(torch.float).sum().item()
-    correct = torch.mean((pred == y).float()).item()
-    test_loss /= num_batches
-    #correct /= size
-    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
-
-for t in range(epochs):
-    print(f"Epoch {t+1}\n-------------------------------")
-    train_loop(train_dataloader, model, optimizer)
-    test_loop(test_dataloader, model)
-print("Done!")
+    # testing
+    X, y = next(iter(test_dataloader))
+    pred_labels = torch.argmax(model(X), axis=1)
+    test_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
+    print(f"Epoch {epoch+1} | Test accuracy: {test_accuracies[-1]:.2f}%")
