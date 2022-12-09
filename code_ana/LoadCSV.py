@@ -27,15 +27,23 @@ class LoadCSV(Dataset):
         self.spin1z = self.__data[4]
         self.spin2z = self.__data[5]
 
+        self.dataset = np.array([])
+        self.y = np.array([])
+
         for i in range (len(self.snr)):
-            self.dataset.append([self.snr[i], self.chisq[i], self.mass_1[i], self.mass_2[i], self.spin1z[i], self.spin2z[i]])
+            aux = np.array([self.snr[i], self.chisq[i], self.mass_1[i], self.mass_2[i], self.spin1z[i], self.spin2z[i]])
+            self.dataset = np.append(self.dataset, aux)
+            if classification == "Blip":
+                self.y = np.append(self.y, 1)
+            elif classification == "Injections":
+                self.y = np.append(self.y, 0)
 
     def __len__(self):
         """
         returns the amount of samples in the data
         """
 
-        return len(self.__data)
+        return len(self.snr)
         
     def __str__(self):
         """
