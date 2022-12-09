@@ -19,29 +19,16 @@ class LoadCSV(Dataset):
         self.__data = self.__data.sort_values(by = ["Event ID", "Event time"]) 
         
         self.__data = self.averaging()
-        
-        #averaged = pd.DataFrame()
 
-        #for event in self.__data["Event ID"]:
-        #    aux = self.__data[self.__data["Event ID"] == event].mean()
-
-        #    averaged = averaged.append(aux, ignore_index = True)
-
-        #self.__filename = str(filename)
-        #self.classification = classification
-
-        # getting the individual columns
-        #self.unnammed = self.__data["Unnamed: 0"]
-        #self.trigger_id = self.__data["Trigger ID"]
-        #self.trigger_time = self.__data["Trigger time"]
-        #self.event_id = self.__data["Event ID"]
-        #self.event_time = self.__data["Event time"]
         self.snr = self.__data[0]
         self.chisq = self.__data[1]
         self.mass_1 = self.__data[2]
         self.mass_2 = self.__data[3]
         self.spin1z = self.__data[4]
         self.spin2z = self.__data[5]
+
+        for i in range (len(self.snr)):
+            self.dataset.append([self.snr[i], self.chisq[i], self.mass_1[i], self.mass_2[i], self.spin1z[i], self.spin2z[i]])
 
     def __len__(self):
         """
