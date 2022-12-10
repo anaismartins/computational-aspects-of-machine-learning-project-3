@@ -1,3 +1,5 @@
+from torch import nn
+
 class Perceptron(nn.Module):
     """
     A simple perceptron model

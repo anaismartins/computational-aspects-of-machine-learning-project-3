@@ -1,6 +1,8 @@
 # general modules
 import os
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 # sklearn
 from sklearn.model_selection import train_test_split
@@ -44,7 +46,7 @@ model = Perceptron()
 print(model)
 
 # specifications for compiling the model
-epochs = 10
+epochs = 200
 train_accuracies, test_accuracies = [], []
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
@@ -66,3 +68,20 @@ for epoch in range(epochs):
     pred_labels = torch.argmax(model(X), axis=1)
     test_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
     print(f"Epoch {epoch+1} | Test accuracy: {test_accuracies[-1]:.2f}%")
+
+# plotting the results
+fig = plt.figure(tight_layout=True)
+gs = gridspec.GridSpec(nrows=2, ncols=1)
+
+ax = fig.add_subplot(gs[0, 0])
+ax.plot(train_accuracies)
+ax.set_xlabel("Epoch")
+ax.set_ylabel("Training Accuracy")
+
+ax = fig.add_subplot(gs[1, 0])
+ax.plot(test_accuracies)
+ax.set_xlabel("Epoch")
+ax.set_ylabel("Test Accuracy")
+
+fig.align_labels()
+plt.savefig("../results/Perceptron.png")
