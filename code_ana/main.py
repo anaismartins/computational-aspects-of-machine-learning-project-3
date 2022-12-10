@@ -51,46 +51,48 @@ train_accuracies, test_accuracies = [], []
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-# def train_model(train_dataloader, test_dataloader, model, lr = 0.01, epochs = 200)):
-#     train_accuracies, test_accuracies = [], []
-#     loss_fn = nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+def train_model(train_dataloader, test_dataloader, model, lr = 0.01, epochs = 200):
+    train_accuracies, test_accuracies = [], []
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-#     for epoch in range(epochs):
-#         for X, y in train_dataloader:
-            
+    for epoch in range(epochs):
+        for X, y in train_dataloader:
+            pred = model(X)
+            pred_labels = torch.argmax(pred, axis=1)
+            loss = loss_fn(pred, y)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-# training and testing the model
-for epoch in range(epochs):
-    # training
-    for X, y in train_dataloader:
-        pred = model(X)
-        pred_labels = torch.argmax(pred, axis=1)
-        loss = loss_fn(pred, y)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-    train_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
+        train_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
 
-    # testing
-    X, y = next(iter(test_dataloader))
-    pred_labels = torch.argmax(model(X), axis=1)
-    test_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
-    print(f"Epoch {epoch+1} | Test accuracy: {test_accuracies[-1]:.2f}%")
+        X, y = next(iter(test_dataloader))
+        pred_labels = torch.argmax(model(X), axis=1)
+        test_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
+        print(f"Epoch {epoch+1} | Test accuracy: {test_accuracies[-1]:.2f}%")
 
-# plotting the results
-fig = plt.figure(tight_layout=True)
-gs = gridspec.GridSpec(nrows=2, ncols=1)
+    return train_accuracies, test_accuracies
 
-ax = fig.add_subplot(gs[0, 0])
-ax.plot(train_accuracies)
-ax.set_xlabel("Epoch")
-ax.set_ylabel("Training Accuracy")
+train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, lr = 0.01, epochs = 200)
 
-ax = fig.add_subplot(gs[1, 0])
-ax.plot(test_accuracies)
-ax.set_xlabel("Epoch")
-ax.set_ylabel("Test Accuracy")
+def plot_results(train_accuracies, test_accuracies, model):
+    fig = plt.figure(tight_layout=True)
+    gs = gridspec.GridSpec(nrows=2, ncols=1)
 
-fig.align_labels()
-plt.savefig("../results/Perceptron.png")
+    ax = fig.add_subplot(gs[0, 0])
+    ax.plot(train_accuracies)
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Training Accuracy")
+
+    ax = fig.add_subplot(gs[1, 0])
+    ax.plot(test_accuracies)
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Test Accuracy")
+
+    ax.set_title(str(model))
+
+    fig.align_labels()
+    plt.savefig("../results/" + str(model) + ".png")
+
+plot_results(train_accuracies, test_accuracies, model)
