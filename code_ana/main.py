@@ -51,6 +51,15 @@ train_accuracies, test_accuracies = [], []
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
+# def train_model(train_dataloader, test_dataloader, model, lr = 0.01, epochs = 200)):
+#     train_accuracies, test_accuracies = [], []
+#     loss_fn = nn.CrossEntropyLoss()
+#     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+
+#     for epoch in range(epochs):
+#         for X, y in train_dataloader:
+            
+
 # training and testing the model
 for epoch in range(epochs):
     # training
