@@ -16,6 +16,7 @@ from torch.utils.data import TensorDataset, DataLoader
 import globals as g
 from LoadCSV import LoadCSV
 from Perceptron import Perceptron
+from VariableNet import VariableNet
 
 # loading the data
 blip = LoadCSV("Blip_H1_O3a.csv", g.path_to_data, "Blip")
@@ -42,6 +43,9 @@ train_dataloader = DataLoader(train_data, shuffle=True, batch_size=142) # 12 bat
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
 # creating the model
+n_units = 6
+n_layers = 1
+
 model = Perceptron()
 print(model)
 
@@ -80,6 +84,13 @@ def plot_results(train_accuracies, test_accuracies, model):
     fig = plt.figure(tight_layout=True)
     gs = gridspec.GridSpec(nrows=2, ncols=1)
 
+    # set plot title
+    if model == Perceptron:
+        fig.suptitle("Perceptron")
+    elif model == VariableNet:
+        fig.suptitle("VariableNet " + str(n_units) + " Units " + str(n_layers) + " Layers")
+    fig.suptitle(str(model))
+
     ax = fig.add_subplot(gs[0, 0])
     ax.plot(train_accuracies)
     ax.set_xlabel("Epoch")
@@ -90,9 +101,10 @@ def plot_results(train_accuracies, test_accuracies, model):
     ax.set_xlabel("Epoch")
     ax.set_ylabel("Test Accuracy")
 
-    ax.set_title(str(model))
-
     fig.align_labels()
-    plt.savefig("../results/" + str(model) + ".png")
+    if model == Perceptron():
+        plt.savefig("../results/" + str(test_accuracies[-1]) + "Acc_Perceptron.png")
+    elif model == VariableNet(n_units, n_layers):
+        plt.savefig("../results/" + str(test_accuracies[-1]) + "Acc_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers.png")
 
 plot_results(train_accuracies, test_accuracies, model)

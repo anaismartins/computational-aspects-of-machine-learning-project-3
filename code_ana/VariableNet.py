@@ -17,6 +17,6 @@ class VariableNet(nn.Module):
         x = self.layers["input"](x)
 
         for i in range(self.n_layers):
-            x = nn.ReLU(self.layers[str(i)](x))
+            x = nn.functional.relu(self.layers[str(i)](x))
 
         return self.layers["output"](x)
