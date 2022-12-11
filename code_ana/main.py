@@ -17,6 +17,7 @@ import globals as g
 from LoadCSV import LoadCSV
 from Perceptron import Perceptron
 from VariableNet import VariableNet
+from OneLayer import OneLayer
 
 from model_training import train_model
 from results_plotting import plot_results
@@ -49,8 +50,8 @@ test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # 
 n_units = 6
 n_layers = 2
 
-model = Perceptron()
-m = "perceptron"
+model = OneLayer(n_units)
+m = "onelayer"
 print(model)
 
 # specifications for compiling the model
@@ -61,4 +62,4 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, lr = 0.01, epochs = 200)
 
-plot_results(train_accuracies, test_accuracies, model)
+plot_results(train_accuracies, test_accuracies, m, n_units)

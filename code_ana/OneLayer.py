@@ -1,3 +1,5 @@
+from torch import nn
+
 class OneLayer(nn.Module):
     """
     model with one hidden layer
@@ -8,8 +10,8 @@ class OneLayer(nn.Module):
         """
         super().__init__()
         self.output = nn.Sequential(
-            nn.Linear(6, n_units)
-            nn.ReLU()
+            nn.Linear(6, n_units),
+            nn.ReLU(),
             nn.Linear(n_units, 2)
         )
     
