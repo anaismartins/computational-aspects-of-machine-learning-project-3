@@ -44,9 +44,10 @@ test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # 
 
 # creating the model
 n_units = 6
-n_layers = 1
+n_layers = 2
 
-model = Perceptron()
+model = VariableNet(n_units, n_layers)
+m = "variablenet"
 print(model)
 
 # specifications for compiling the model
@@ -85,11 +86,10 @@ def plot_results(train_accuracies, test_accuracies, model):
     gs = gridspec.GridSpec(nrows=2, ncols=1)
 
     # set plot title
-    if model == Perceptron:
+    if m == "perceptron":
         fig.suptitle("Perceptron")
-    elif model == VariableNet:
+    elif m == "variablenet":
         fig.suptitle("VariableNet " + str(n_units) + " Units " + str(n_layers) + " Layers")
-    fig.suptitle(str(model))
 
     ax = fig.add_subplot(gs[0, 0])
     ax.plot(train_accuracies)
@@ -102,9 +102,9 @@ def plot_results(train_accuracies, test_accuracies, model):
     ax.set_ylabel("Test Accuracy")
 
     fig.align_labels()
-    if model == Perceptron():
-        plt.savefig("../results/" + str(test_accuracies[-1]) + "Acc_Perceptron.png")
-    elif model == VariableNet(n_units, n_layers):
-        plt.savefig("../results/" + str(test_accuracies[-1]) + "Acc_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers.png")
+    if m == "perceptron":
+        plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_Perceptron.png")
+    elif m == "variablenet":
+        plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers.png")
 
 plot_results(train_accuracies, test_accuracies, model)
