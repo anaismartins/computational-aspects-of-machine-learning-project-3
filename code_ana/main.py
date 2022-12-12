@@ -46,20 +46,24 @@ test_data = TensorDataset(X_test, y_test)
 train_dataloader = DataLoader(train_data, shuffle=True, batch_size=142) # 12 batches for the data size we have 
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
-# creating the model
+# SPECIFY THE MODEL HERE ---------------------------------------------
 n_units = 6
 n_layers = 2
 
-model = OneLayer(n_units)
-m = "onelayer"
+activation = nn.ReLU()
+a = "ReLU"
+
+model = Perceptron(activation)
+m = "Perceptron"
 print(model)
 
 # specifications for compiling the model
 epochs = 200
-train_accuracies, test_accuracies = [], []
 loss_fn = nn.CrossEntropyLoss()
+l = "CrossEntropyLoss"
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+o = "Adam"
 
 train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, lr = 0.01, epochs = 200)
 
-plot_results(train_accuracies, test_accuracies, m, n_units)
+plot_results(train_accuracies, test_accuracies, m, a, l, o, n_units)

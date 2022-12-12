@@ -4,12 +4,15 @@ class Perceptron(nn.Module):
     """
     A simple perceptron model
     """
-    def __init__(self):
+    def __init__(self, activation):
         """
         runs when the object is created
         """
         super().__init__()
-        self.output = nn.Linear(6, 2)
+        self.output = nn.Sequential(
+            activation(),
+            nn.Linear(6, 2)
+            )
 
     def forward(self, x):
         x = self.output(x)
