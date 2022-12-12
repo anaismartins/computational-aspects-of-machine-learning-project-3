@@ -53,7 +53,7 @@ n_layers = 2
 activation = nn.ReLU()
 a = "ReLU"
 
-model = Perceptron(activation)
+model = Perceptron()
 m = "Perceptron"
 print(model)
 
@@ -64,6 +64,6 @@ l = "CrossEntropyLoss"
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 o = "Adam"
 
-train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, lr = 0.01, epochs = 200)
+train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr = 0.01, epochs = 200)
 
 plot_results(train_accuracies, test_accuracies, m, a, l, o, n_units)
