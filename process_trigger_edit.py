@@ -24,8 +24,8 @@ for filename in os.listdir(folder_path):
             fast_scattering_files.append(pd.read_csv(os.path.join(folder_path, filename)))            
         elif filename.startswith("Injections_H1"):
             injection_files.append((os.path.join(folder_path, filename)))       
-        elif filename.startswith("KoyFish"):
-            koyfish_files.append(pd.read_csv(os.path.join(folder_path, filename)))
+        elif filename.startswith("KoyFish_H1"):
+            koyfish_files.append((os.path.join(folder_path, filename)))
         elif filename.startswith("Low"):
             lowfreq_files.append(pd.read_csv(os.path.join(folder_path, filename)))
         elif filename.startswith("Tomte"):
@@ -117,7 +117,7 @@ def read_triggers(read_paths, trigger_id):
     
     return all_triggers
 
-blip_triggers = read_triggers(blip_files, 0)
+blip_triggers = read_triggers(koyfish_files, 0)
 injection_triggers = read_triggers(injection_files, 1)
 
 np.random.shuffle(injection_triggers)
@@ -127,4 +127,4 @@ injection_triggers = injection_triggers[0:blip_triggers.shape[0]]
 dataset = np.append(injection_triggers, blip_triggers, axis = 0)
 np.random.shuffle(dataset)
 
-np.save('dataset_inj_blip.npy', dataset)
+np.save('dataset_inj_koyfish.npy', dataset)
