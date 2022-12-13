@@ -1,0 +1,3 @@
+- [PyTorch](https://pytorch.org)
+- [PyTorch: How to Train and Optimize a Neural Network in 10 Minutes](https://appsilon.com/pytorch-neural-network-tutorial/)
+- 
