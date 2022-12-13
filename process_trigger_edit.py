@@ -10,20 +10,20 @@ lowfreq_files = []
 tomte_files = []
 whistle_files = []
 
-folder_path = '/home/jonno/ML_Course/ML_data/'
-#folder_path = '../../../lopezm/ML_projects/Projects_2022/Project_3/Data/dataframes/' 
+#folder_path = '/home/jonno/ML_Course/ML_data/'
+folder_path = "../../lopezm/ML_projects/Projects_2022/Project_3/Data/dataframes/" 
 
 # Iterate over all files in the given folder
 for filename in os.listdir(folder_path):
     # Check if the file is a CSV file
     if filename.endswith(".csv"):
         #Check what type of data the file contains and put in in the corresponding list.
-        if filename.startswith("Blip"):
-            blip_files.append(pd.read_csv(os.path.join(folder_path, filename)))
+        if filename.startswith("Blip_H1"):
+            blip_files.append((os.path.join(folder_path, filename)))
         elif filename.startswith("Fast"):
             fast_scattering_files.append(pd.read_csv(os.path.join(folder_path, filename)))            
-        elif filename.startswith("Injections"):
-            injection_files.append(pd.read_csv(os.path.join(folder_path, filename)))       
+        elif filename.startswith("Injections_H1"):
+            injection_files.append((os.path.join(folder_path, filename)))       
         elif filename.startswith("KoyFish"):
             koyfish_files.append(pd.read_csv(os.path.join(folder_path, filename)))
         elif filename.startswith("Low"):
@@ -31,7 +31,7 @@ for filename in os.listdir(folder_path):
         elif filename.startswith("Tomte"):
             tomte_files.append(pd.read_csv(os.path.join(folder_path, filename)))
         elif filename.startswith("Whistle"):
-            whistle_files.append(pd.read_csv(os.path.join(folder_path, filename)))       
+            whistle_files.append(pd.read_csv(os.path.join(folder_path, filename)))    
 
 #Now this function must be edited so that it reads the csv files from e.g. the koyfish_files array
 def read_triggers(read_paths, trigger_id):
@@ -94,12 +94,12 @@ def read_triggers(read_paths, trigger_id):
                 # If the evnet only has one trigger, no averaging.
                 if len(ev_snr) ==0:
                     triggers = np.array([[data_sorted[i][5], data_sorted[i][6], data_sorted[i][7],
-                                       data_sorted[i][8],data_sorted[i][9], data_sorted[i][10], trigger_id[0], trigger_id[1]]])
+                                       data_sorted[i][8],data_sorted[i][9], data_sorted[i][10], trigger_id]])
                 # If we have multiple triggers, we need to average over them.
                 else:
                     triggers = np.array([[np.average(ev_snr), np.average(ev_chisq), np.average(ev_m1),
                                         np.average(ev_m2), np.average(ev_s1), 
-                                          np.average(ev_s2), trigger_id[0], trigger_id[1]]]) 
+                                          np.average(ev_s2), trigger_id]]) 
                 
                 ev_snr = np.array([])
                 ev_chisq = np.array([])
@@ -117,8 +117,8 @@ def read_triggers(read_paths, trigger_id):
     
     return all_triggers
 
-blip_triggers = read_triggers(blip_paths, [0,1])
-injection_triggers = read_triggers(injection_paths, [1,0])
+blip_triggers = read_triggers(blip_files, 0)
+injection_triggers = read_triggers(injection_files, 1)
 
 np.random.shuffle(injection_triggers)
 
@@ -127,4 +127,4 @@ injection_triggers = injection_triggers[0:blip_triggers.shape[0]]
 dataset = np.append(injection_triggers, blip_triggers, axis = 0)
 np.random.shuffle(dataset)
 
-np.save('dataset_inj_blip.npy',dataset)
+np.save('dataset_inj_blip.npy', dataset)

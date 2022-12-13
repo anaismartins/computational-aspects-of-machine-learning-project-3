@@ -30,9 +30,9 @@ injection = LoadCSV("Injections_H1_O3a.csv", g.path_to_data, "Injections")
 X = blip.dataset
 y = blip.y
 
-for i in range(len(blip)):
-    X.append(injection.dataset[i])
-    y.append(injection.y[i])
+data = np.load("../dataset_inj_blip.npy")
+X = data[:,:-1]
+y = data[:,-1]
 
 X = torch.tensor(X, dtype=torch.float)
 y = torch.tensor(y, dtype=torch.long)
