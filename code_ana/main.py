@@ -43,15 +43,19 @@ train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size) #
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
 # SPECIFY THE MODEL HERE ---------------------------------------------
+<<<<<<< HEAD
 n_units = 10 # number of units in the hidden layer
+=======
+n_units = 10 # generally 10 to 512
+>>>>>>> ced683fc06b7163308b8c19c61db8fc4cac0301f
 n_layers = 100
 lr = 0.0001
 
 activation = nn.ReLU()
 a = "ReLU"
 
-model = Perceptron()
-m = "Perceptron"
+model = OneLayer(n_units)
+m = "OneLayer"
 print(model)
 
 # specifications for compiling the model
