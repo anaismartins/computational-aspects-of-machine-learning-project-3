@@ -22,12 +22,14 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
-data = np.load("../dataset_inj_blip.npy")
+data = np.load("../dataset_inj_blip_koyfish.npy")
 X = data[:,:-1]
 y = data[:,-1]
 
 X = torch.tensor(X, dtype=torch.float)
 y = torch.tensor(y, dtype=torch.long)
+
+print(y)
 
 # splitting the data into train and test
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=42)
@@ -35,13 +37,13 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random
 train_data = TensorDataset(X_train, y_train)
 test_data = TensorDataset(X_test, y_test)
 
-batch_size = 6
+batch_size = 429
 
 train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size) # 12 batches for the data size we have 
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
 # SPECIFY THE MODEL HERE ---------------------------------------------
-n_units = 200
+n_units = 10 # number of units in the hidden layer
 n_layers = 100
 lr = 0.0001
 

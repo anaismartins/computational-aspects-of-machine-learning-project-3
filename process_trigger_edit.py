@@ -117,14 +117,15 @@ def read_triggers(read_paths, trigger_id):
     
     return all_triggers
 
-blip_triggers = read_triggers(koyfish_files, 0)
 injection_triggers = read_triggers(injection_files, 1)
-
-np.random.shuffle(injection_triggers)
+blip_triggers = read_triggers(blip_files, 2)
+koyfish_triggers = read_triggers(koyfish_files, 3)
 
 injection_triggers = injection_triggers[0:blip_triggers.shape[0]]
+koyfish_triggers = koyfish_triggers[0:blip_triggers.shape[0]]
 
 dataset = np.append(injection_triggers, blip_triggers, axis = 0)
+dataset = np.append(dataset, koyfish_triggers, axis = 0)
 np.random.shuffle(dataset)
 
-np.save('dataset_inj_koyfish.npy', dataset)
+np.save('dataset_inj_blip_koyfish.npy', dataset)
