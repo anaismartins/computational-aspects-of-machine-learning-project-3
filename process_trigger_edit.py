@@ -22,10 +22,18 @@ for filename in os.listdir(folder_path):
             blip_files.append((os.path.join(folder_path, filename)))
         elif filename.startswith("Fast_Scattering_H1"):
             fast_scattering_files.append((os.path.join(folder_path, filename)))            
+        elif filename.startswith("Fast_Scattering_H1"):
+            fast_scattering_files.append((os.path.join(folder_path, filename)))            
         elif filename.startswith("Injections_H1"):
             injection_files.append((os.path.join(folder_path, filename)))       
         elif filename.startswith("KoyFish_H1"):
             koyfish_files.append((os.path.join(folder_path, filename)))
+        elif filename.startswith("Low_freq_burst_H1"):
+            lowfreq_files.append((os.path.join(folder_path, filename)))
+        elif filename.startswith("Tomte_H1"):
+            tomte_files.append((os.path.join(folder_path, filename)))
+        elif filename.startswith("Whistle_H1"):
+            whistle_files.append((os.path.join(folder_path, filename)))    
         elif filename.startswith("Low_freq_burst_H1"):
             lowfreq_files.append((os.path.join(folder_path, filename)))
         elif filename.startswith("Tomte_H1"):
