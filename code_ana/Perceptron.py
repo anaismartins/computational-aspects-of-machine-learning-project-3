@@ -13,8 +13,8 @@ class Perceptron(nn.Module):
         # self.activation = activation()
 
         self.output = nn.Sequential(
-            nn.ReLU(),
-            nn.Linear(6, 3)
+            nn.Linear(6, 1),
+            nn.Linear(1, 7)
             )
 
     def forward(self, x):
