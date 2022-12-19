@@ -8,13 +8,13 @@ class Perceptron(nn.Module):
         """
         runs when the object is created
         """
-        super().__init__()
+        super(Perceptron, self).__init__()
 
         # self.activation = activation()
 
         self.output = nn.Sequential(
-            nn.ReLU(),
-            nn.Linear(6, 2)
+            nn.Linear(6, 1),
+            nn.Linear(1, 7)
             )
 
     def forward(self, x):

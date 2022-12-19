@@ -20,21 +20,21 @@ for filename in os.listdir(folder_path):
         #Check what type of data the file contains and put in in the corresponding list.
         if filename.startswith("Blip_H1"):
             blip_files.append((os.path.join(folder_path, filename)))
-        elif filename.startswith("Fast"):
-            fast_scattering_files.append(pd.read_csv(os.path.join(folder_path, filename)))            
+        elif filename.startswith("Fast_Scattering_H1"):
+            fast_scattering_files.append((os.path.join(folder_path, filename)))            
         elif filename.startswith("Injections_H1"):
             injection_files.append((os.path.join(folder_path, filename)))       
         elif filename.startswith("KoyFish_H1"):
             koyfish_files.append((os.path.join(folder_path, filename)))
-        elif filename.startswith("Low"):
-            lowfreq_files.append(pd.read_csv(os.path.join(folder_path, filename)))
-        elif filename.startswith("Tomte"):
-            tomte_files.append(pd.read_csv(os.path.join(folder_path, filename)))
-        elif filename.startswith("Whistle"):
-            whistle_files.append(pd.read_csv(os.path.join(folder_path, filename)))    
+        elif filename.startswith("Low_freq_burst_H1"):
+            lowfreq_files.append((os.path.join(folder_path, filename)))
+        elif filename.startswith("Tomte_H1"):
+            tomte_files.append((os.path.join(folder_path, filename)))
+        elif filename.startswith("Whistle_H1"):
+            whistle_files.append((os.path.join(folder_path, filename)))    
 
 #Now this function must be edited so that it reads the csv files from e.g. the koyfish_files array
-def read_triggers(read_paths, trigger_id):
+def read_triggers(read_paths, trigger_id, weighted_average = False):
     """
     Function that reads the CSV trigger files, averages them and converts it to the right array format.
     """
@@ -95,9 +95,17 @@ def read_triggers(read_paths, trigger_id):
                 if len(ev_snr) ==0:
                     triggers = np.array([[data_sorted[i][5], data_sorted[i][6], data_sorted[i][7],
                                        data_sorted[i][8],data_sorted[i][9], data_sorted[i][10], trigger_id]])
-                # If we have multiple triggers, we need to average over them.
+                # Otherwise we have multiple triggers and we need to average over them.
                 else:
-                    triggers = np.array([[np.average(ev_snr), np.average(ev_chisq), np.average(ev_m1),
+                    # Here we perform the weighted average
+                    if weighted_average == True:
+                        weights = ev_snr / np.max(ev_snr)
+                        triggers = np.array([[np.average(ev_snr, weights = weights), np.average(ev_chisq, weights = weights),
+                                              np.average(ev_m1, weights = weights), np.average(ev_m2, weights = weights),
+                                              np.average(ev_s1, weights = weights), np.average(ev_s2, weights = weights), 
+                                              trigger_id]]) 
+                    else: 
+                        triggers = np.array([[np.average(ev_snr), np.average(ev_chisq), np.average(ev_m1),
                                         np.average(ev_m2), np.average(ev_s1), 
                                           np.average(ev_s2), trigger_id]]) 
                 
@@ -117,14 +125,28 @@ def read_triggers(read_paths, trigger_id):
     
     return all_triggers
 
-blip_triggers = read_triggers(koyfish_files, 0)
-injection_triggers = read_triggers(injection_files, 1)
+injection_triggers = read_triggers(injection_files, 0)
+blip_triggers = read_triggers(blip_files, 1)
+fast_scattering_triggers = read_triggers(fast_scattering_files, 2)
+koyfish_triggers = read_triggers(koyfish_files, 3)
+lowfreq_triggers = read_triggers(lowfreq_files, 4)
+tomte_triggers = read_triggers(tomte_files, 5)
+whistle_triggers = read_triggers(whistle_files, 6)
 
-np.random.shuffle(injection_triggers)
 
-injection_triggers = injection_triggers[0:blip_triggers.shape[0]]
+injection_triggers = injection_triggers[0:fast_scattering_triggers.shape[0]]
+blip_triggers = blip_triggers[0:fast_scattering_triggers.shape[0]]
+koyfish_triggers = koyfish_triggers[0:fast_scattering_triggers.shape[0]]
+lowfreq_triggers = lowfreq_triggers[0:fast_scattering_triggers.shape[0]]
+tomte_triggers = tomte_triggers[0:fast_scattering_triggers.shape[0]]
+whistle_triggers = whistle_triggers[0:fast_scattering_triggers.shape[0]]
 
 dataset = np.append(injection_triggers, blip_triggers, axis = 0)
+dataset = np.append(dataset, fast_scattering_triggers, axis = 0)
+dataset = np.append(dataset, koyfish_triggers, axis = 0)
+dataset = np.append(dataset, lowfreq_triggers, axis = 0)
+dataset = np.append(dataset, tomte_triggers, axis = 0)
+dataset = np.append(dataset, whistle_triggers, axis = 0)
 np.random.shuffle(dataset)
 
-np.save('dataset_inj_koyfish.npy', dataset)
+np.save('dataset_all_h1.npy', dataset)

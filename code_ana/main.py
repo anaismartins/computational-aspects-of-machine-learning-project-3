@@ -22,7 +22,7 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
-data = np.load("../dataset_inj_blip.npy")
+data = np.load("../dataset_all_h1.npy")
 X = data[:,:-1]
 y = data[:,-1]
 
@@ -35,7 +35,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random
 train_data = TensorDataset(X_train, y_train)
 test_data = TensorDataset(X_test, y_test)
 
-batch_size = 6
+batch_size = 429
 
 train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size) # 12 batches for the data size we have 
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once

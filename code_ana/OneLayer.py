@@ -12,7 +12,7 @@ class OneLayer(nn.Module):
         self.output = nn.Sequential(
             nn.Linear(6, n_units),
             nn.ReLU(),
-            nn.Linear(n_units, 2) 
+            nn.Linear(n_units, 7)
         )
     
     def forward(self, x):
