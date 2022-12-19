@@ -35,25 +35,25 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random
 train_data = TensorDataset(X_train, y_train)
 test_data = TensorDataset(X_test, y_test)
 
-batch_size = 429
+batch_size = round(len(train_data.tensors[0])/10)
 
-train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size) # 12 batches for the data size we have 
+train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size) 
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
 # SPECIFY THE MODEL HERE ---------------------------------------------
 n_units = 10 # generally 10 to 512
-n_layers = 100
+n_layers = 2
 lr = 0.0001
 
 activation = nn.ReLU()
 a = "ReLU"
 
-model = OneLayer(n_units)
-m = "OneLayer"
+model = VariableNet(n_units, n_layers)
+m = "VariableNet"
 print(model)
 
 # specifications for compiling the model
-epochs = 200
+epochs = 2000
 loss_fn = nn.CrossEntropyLoss()
 l = "CrossEntropyLoss"
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)

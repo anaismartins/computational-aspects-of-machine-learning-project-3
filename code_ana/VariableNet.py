@@ -11,7 +11,7 @@ class VariableNet(nn.Module):
         for i in range(self.n_layers):
             self.layers[str(i)] = nn.Linear(n_units, n_units)
 
-        self.layers["output"] = nn.Linear(n_units, 2)
+        self.layers["output"] = nn.Linear(n_units, 7)
 
     def forward(self, x):
         x = self.layers["input"](x)
