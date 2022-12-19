@@ -34,7 +34,7 @@ for filename in os.listdir(folder_path):
             whistle_files.append(pd.read_csv(os.path.join(folder_path, filename)))    
 
 #Now this function must be edited so that it reads the csv files from e.g. the koyfish_files array
-def read_triggers(read_paths, trigger_id):
+def read_triggers(read_paths, trigger_id, weighted_average = False):
     """
     Function that reads the CSV trigger files, averages them and converts it to the right array format.
     """
@@ -95,9 +95,17 @@ def read_triggers(read_paths, trigger_id):
                 if len(ev_snr) ==0:
                     triggers = np.array([[data_sorted[i][5], data_sorted[i][6], data_sorted[i][7],
                                        data_sorted[i][8],data_sorted[i][9], data_sorted[i][10], trigger_id]])
-                # If we have multiple triggers, we need to average over them.
+                # Otherwise we have multiple triggers and we need to average over them.
                 else:
-                    triggers = np.array([[np.average(ev_snr), np.average(ev_chisq), np.average(ev_m1),
+                    # Here we perform the weighted average
+                    if weighted_average == True:
+                        weights = ev_snr / np.max(ev_snr)
+                        triggers = np.array([[np.average(ev_snr, weights = weights), np.average(ev_chisq, weights = weights),
+                                              np.average(ev_m1, weights = weights), np.average(ev_m2, weights = weights),
+                                              np.average(ev_s1, weights = weights), np.average(ev_s2, weights = weights), 
+                                              trigger_id]]) 
+                    else: 
+                        triggers = np.array([[np.average(ev_snr), np.average(ev_chisq), np.average(ev_m1),
                                         np.average(ev_m2), np.average(ev_s1), 
                                           np.average(ev_s2), trigger_id]]) 
                 
