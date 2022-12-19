@@ -125,6 +125,7 @@ def read_triggers(read_paths, trigger_id, weighted_average = False):
     
     return all_triggers
 
+<<<<<<< HEAD
 injection_triggers = read_triggers(injection_files, 0)
 blip_triggers = read_triggers(blip_files, 1)
 fast_scattering_triggers = read_triggers(fast_scattering_files, 2)
@@ -150,3 +151,17 @@ dataset = np.append(dataset, whistle_triggers, axis = 0)
 np.random.shuffle(dataset)
 
 np.save('dataset_all_h1.npy', dataset)
+=======
+injection_triggers = read_triggers(injection_files, 1)
+blip_triggers = read_triggers(blip_files, 2)
+koyfish_triggers = read_triggers(koyfish_files, 3)
+
+injection_triggers = injection_triggers[0:blip_triggers.shape[0]]
+koyfish_triggers = koyfish_triggers[0:blip_triggers.shape[0]]
+
+dataset = np.append(injection_triggers, blip_triggers, axis = 0)
+dataset = np.append(dataset, koyfish_triggers, axis = 0)
+np.random.shuffle(dataset)
+
+np.save('dataset_inj_blip_koyfish.npy', dataset)
+>>>>>>> 7c6a57c998369e9c6228d933b9bd6aab4800935a
