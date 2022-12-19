@@ -42,10 +42,10 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, n_units = 0, n_l
 
             if ("Perceptron_" + a + l + o) in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
                 os.remove("../results/" + file)
-                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_Perceptron_" + a + l + o + ".png")
+                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_Perceptron_" + a + l + o + ".png")
 
         if not exists:
-            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_Perceptron_" + a + l + o + ".png")
+            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_Perceptron_" + a + l + o + ".png")
 
     elif m == "VariableNet":
         # bool for checking if we already have this model
@@ -58,10 +58,10 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, n_units = 0, n_l
 
             if ("VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + l + o) in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
                 os.remove("../results/" + file)
-                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + l + o + ".png")
+                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + l + o + ".png")
     
         if not exists: 
-            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + l + o + ".png")
+            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + l + o + ".png")
 
     elif m == "OneLayer":
         # bool for checking if we already have this model
@@ -74,7 +74,7 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, n_units = 0, n_l
 
             if ("OneLayer" + str(n_units) + "Units_" + a + l + o) in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
                 os.remove("../results/" + file)
-                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_OneLayer" + str(n_units) + "Units_" + a + l + o + ".png")
+                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_OneLayer" + str(n_units) + "Units_" + a + l + o + ".png")
 
         if not exists:
-            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_OneLayer" + str(n_units) + "Units_" + a + l + o + ".png")
+            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_OneLayer" + str(n_units) + "Units_" + a + l + o + ".png")
