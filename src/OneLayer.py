@@ -10,7 +10,7 @@ class OneLayer(nn.Module):
         """
         super().__init__()
 
-        if a == "relu":
+        if a == "ReLU":
             self.activation = nn.ReLU()
 
         self.output = nn.Sequential(

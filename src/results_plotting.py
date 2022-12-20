@@ -5,17 +5,17 @@ import os
 # my modules
 import globals as g
 
-def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, n_units = 0, n_layers = 0):
+def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_units = 0, n_layers = 0):
     fig = plt.figure(tight_layout=True)
     gs = gridspec.GridSpec(nrows=2, ncols=1)
 
     # set plot title
     if m == "Perceptron":
-        fig.suptitle("Perceptron with " + a + " Activation " + l + " Loss and " + o + " Optimizer and Learning Rate of " + lr)
+        fig.suptitle("Perceptron")
     elif m == "VariableNet":
-        fig.suptitle("VariableNet " + str(n_units) + " Units " + str(n_layers) + " Layers with " + a + " Activation " + l + " Loss and " + o + " Optimizer and Learning Rate of " + lr)
+        fig.suptitle("VariableNet " + str(n_units) + " Units " + str(n_layers) + " Layers")
     elif m == "OneLayer":
-        fig.suptitle("OneLayer " + str(n_units) + " Units with " + a + " Activation " + l + " Loss and " + o + " Optimizer and Learning Rate of " + lr)
+        fig.suptitle("OneLayer " + str(n_units) + " Units")
 
     ax = fig.add_subplot(gs[0, 0])
     ax.plot(train_accuracies)
@@ -34,7 +34,7 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, n_units = 0,
     if m == "Perceptron":
         # bool for checking if we already have this model
         exists = False
-        filename = "Perceptron_" + a + "_" + l + "_" + o + "_" + lr + "lr.png"
+        filename = "Perceptron_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs.png"
 
         # check if there is a perceptron already and delete it
         for file in dir_list:
@@ -51,7 +51,7 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, n_units = 0,
     elif m == "VariableNet":
         # bool for checking if we already have this model
         exists = False
-        filename = "VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + "_" + l + "_" + o + "_" + lr + "lr.png"
+        filename = "VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs.png"
 
         # check if there is a variable net with the same specifications already and delete it
         for file in dir_list:
@@ -68,7 +68,7 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, n_units = 0,
     elif m == "OneLayer":
         # bool for checking if we already have this model
         exists = False
-        filename = "OneLayer" + str(n_units) + "Units_" + a + "_" + l + "_" + o + "_" + lr + "lr.png"
+        filename = "OneLayer" + str(n_units) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs.png"
 
         # check if there is a one layer net with the same specifications already and delete it
         for file in dir_list:

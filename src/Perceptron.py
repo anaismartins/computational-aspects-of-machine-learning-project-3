@@ -10,7 +10,7 @@ class Perceptron(nn.Module):
         """
         super(Perceptron, self).__init__()
 
-        if a == "relu":
+        if a == "ReLU":
             self.activation = nn.ReLU()
 
         self.output = nn.Sequential(
