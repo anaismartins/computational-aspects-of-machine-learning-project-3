@@ -157,4 +157,4 @@ dataset = np.append(dataset, tomte_triggers, axis = 0)
 dataset = np.append(dataset, whistle_triggers, axis = 0)
 np.random.shuffle(dataset)
 
-np.save('dataset_all_h1.npy', dataset)
+np.save('../datasets/dataset_all_h1.npy', dataset)
