@@ -5,17 +5,17 @@ import os
 # my modules
 import globals as g
 
-def plot_results(train_accuracies, test_accuracies, m, a, l, o, n_units = 0, n_layers = 0):
+def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, n_units = 0, n_layers = 0):
     fig = plt.figure(tight_layout=True)
     gs = gridspec.GridSpec(nrows=2, ncols=1)
 
     # set plot title
     if m == "Perceptron":
-        fig.suptitle("Perceptron with " + a + " Activation " + l + " Loss and " + o + " Optimizer")
+        fig.suptitle("Perceptron with " + a + " Activation " + l + " Loss and " + o + " Optimizer and Learning Rate of " + lr)
     elif m == "VariableNet":
-        fig.suptitle("VariableNet " + str(n_units) + " Units " + str(n_layers) + " Layers with " + a + " Activation " + l + " Loss and " + o + " Optimizer")
+        fig.suptitle("VariableNet " + str(n_units) + " Units " + str(n_layers) + " Layers with " + a + " Activation " + l + " Loss and " + o + " Optimizer and Learning Rate of " + lr)
     elif m == "OneLayer":
-        fig.suptitle("OneLayer " + str(n_units) + " Units with " + a + " Activation " + l + " Loss and " + o + " Optimizer")
+        fig.suptitle("OneLayer " + str(n_units) + " Units with " + a + " Activation " + l + " Loss and " + o + " Optimizer and Learning Rate of " + lr)
 
     ax = fig.add_subplot(gs[0, 0])
     ax.plot(train_accuracies)
@@ -34,47 +34,50 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, n_units = 0, n_l
     if m == "Perceptron":
         # bool for checking if we already have this model
         exists = False
+        filename = "Perceptron_" + a + "_" + l + "_" + o + "_" + lr + "lr.png"
 
         # check if there is a perceptron already and delete it
         for file in dir_list:
-            if ("Perceptron_" + a + l + o) in file:
+            if filename in file:
                 exists = True
 
-            if ("Perceptron_" + a + l + o) in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
+            if filename in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
                 os.remove("../results/" + file)
-                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_Perceptron_" + a + l + o + ".png")
+                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_" + filename)
 
         if not exists:
-            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_Perceptron_" + a + l + o + ".png")
+            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_" + filename)
 
     elif m == "VariableNet":
         # bool for checking if we already have this model
         exists = False
+        filename = "VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + "_" + l + "_" + o + "_" + lr + "lr.png"
 
         # check if there is a variable net with the same specifications already and delete it
         for file in dir_list:
-            if ("VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + l + o) in file:
+            if filename in file:
                 exists = True
 
-            if ("VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + l + o) in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
+            if filename in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
                 os.remove("../results/" + file)
-                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + l + o + ".png")
+                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_" + filename)
     
         if not exists: 
-            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + l + o + ".png")
+            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_" + filename)
 
     elif m == "OneLayer":
         # bool for checking if we already have this model
         exists = False
+        filename = "OneLayer" + str(n_units) + "Units_" + a + "_" + l + "_" + o + "_" + lr + "lr.png"
 
         # check if there is a one layer net with the same specifications already and delete it
         for file in dir_list:
-            if ("OneLayer" + str(n_units) + "Units_" + a + l + o) in file:
+            if filename in file:
                 exists = True
 
-            if ("OneLayer" + str(n_units) + "Units_" + a + l + o) in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
+            if filename in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
                 os.remove("../results/" + file)
-                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_OneLayer" + str(n_units) + "Units_" + a + l + o + ".png")
+                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_" + filename)
 
         if not exists:
-            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_OneLayer" + str(n_units) + "Units_" + a + l + o + ".png")
+            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_" + filename)

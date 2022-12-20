@@ -1,8 +1,12 @@
 from torch import nn
 
 class VariableNet(nn.Module):
-    def __init__(self, n_units, n_layers):
+    def __init__(self, n_units, n_layers, a):
         super().__init__()
+
+        if a == "relu":
+            self.activation = nn.ReLU()
+
         self.n_layers = n_layers
 
         self.layers = nn.ModuleDict()
@@ -17,6 +21,6 @@ class VariableNet(nn.Module):
         x = self.layers["input"](x)
 
         for i in range(self.n_layers):
-            x = nn.functional.relu(self.layers[str(i)](x))
+            x = self.activation(self.layers[str(i)](x))
 
         return self.layers["output"](x)

@@ -4,16 +4,18 @@ class Perceptron(nn.Module):
     """
     A simple perceptron model
     """
-    def __init__(self):
+    def __init__(self, a):
         """
         runs when the object is created
         """
         super(Perceptron, self).__init__()
 
-        # self.activation = activation()
+        if a == "relu":
+            self.activation = nn.ReLU()
 
         self.output = nn.Sequential(
             nn.Linear(6, 1),
+            self.activation(),
             nn.Linear(1, 7)
             )
 

@@ -48,7 +48,7 @@ lr = 0.0001
 activation = nn.ReLU()
 a = "ReLU"
 
-model = VariableNet(n_units, n_layers)
+model = VariableNet(n_units, n_layers, a)
 m = "VariableNet"
 print(model)
 
