@@ -141,6 +141,13 @@ lowfreq_triggers = read_triggers(lowfreq_files, 4)
 tomte_triggers = read_triggers(tomte_files, 5)
 whistle_triggers = read_triggers(whistle_files, 6)
 
+np.save('../datasets/injection_triggers.npy', injection_triggers)
+np.save('../datasets/blip_triggers.npy', blip_triggers)
+np.save('../datasets/fast_scattering_triggers.npy', fast_scattering_triggers)
+np.save('../datasets/koyfish_triggers.npy', koyfish_triggers)
+np.save('../datasets/lowfreq_triggers.npy', lowfreq_triggers)
+np.save('../datasets/tomte_triggers.npy', tomte_triggers)
+np.save('../datasets/whistle_triggers.npy', whistle_triggers)
 
 injection_triggers = injection_triggers[0:fast_scattering_triggers.shape[0]]
 blip_triggers = blip_triggers[0:fast_scattering_triggers.shape[0]]
