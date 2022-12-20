@@ -11,7 +11,7 @@ tomte_files = []
 whistle_files = []
 
 #folder_path = '/home/jonno/ML_Course/ML_data/'
-folder_path = "../../lopezm/ML_projects/Projects_2022/Project_3/Data/dataframes/" 
+folder_path = "../../../lopezm/ML_projects/Projects_2022/Project_3/Data/dataframes/" 
 
 # Iterate over all files in the given folder
 for filename in os.listdir(folder_path):

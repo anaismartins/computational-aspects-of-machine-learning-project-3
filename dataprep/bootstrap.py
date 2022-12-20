@@ -9,21 +9,55 @@ lowfreqs = np.load("../datasets/lowfreq_triggers.npy")
 tomtes = np.load("../datasets/tomte_triggers.npy")
 whistles = np.load("../datasets/whistle_triggers.npy")
 
-blips_boot = np.array([])
-fast_scattering_boot = np.array([])
-koyfish_boot = np.array([])
-lowfreq_boot = np.array([])
-tomte_boot = np.array([])
-whistle_boot = np.array([])
-
 biggest = 2649
 
-for i in range(0, 100):
-    blips_boot = np.append(blips_boot, random.sample(blips.to_list(), round(biggest/100)))
-    fast_scattering_boot = np.append(fast_scattering_boot, random.sample(fast_scatterings.to_list(), round(biggest/100)))
-    koyfish_boot = np.append(koyfish_boot, random.sample(koyfishes.to_list(), round(biggest/100)))
-    lowfreq_boot = np.append(lowfreq_boot, random.sample(lowfreqs.to_list(), round(biggest/100)))
-    tomte_boot = np.append(tomte_boot, random.sample(tomtes.to_list(), round(biggest/100)))
-    whistle_boot = np.append(whistle_boot, random.sample(whistles.to_list(), round(biggest/100)))
+#blips
+def bootstrap(glitch):
+    glitch_boot = [[]]
+    col = []
+    nums = np.array([])
 
-print(blips_boot.shape)
+    for n in range(0, 6):
+        for i in range(0, 100):
+            for j in range (0, glitch.shape[0]):
+                col.append(glitch[j][n])
+            nums = np.append(nums, random.sample(col, round(biggest/100)))
+
+        if n == 0:
+            glitch_boot[0] = nums
+        else:
+            glitch_boot.append(nums)
+
+        nums = np.array([]) 
+        col = []
+
+    result = [[]]
+
+    for i in range(len(glitch_boot)):
+        for j in range(len(glitch_boot[0])):
+            result[j][i] = glitch_boot[i][j]
+
+    return result
+
+blip_boot = bootstrap(blips)
+fast_scattering_boot = bootstrap(fast_scatterings)
+koyfish_boot = bootstrap(koyfishes)
+lowfreq_boot = bootstrap(lowfreqs)
+tomte_boot = bootstrap(tomtes)
+whistle_boot = bootstrap(whistles)
+
+injection_boot = injections[0:round(biggest/100)]
+
+print(len(blip_boot))
+
+dataset = np.append(injection_boot, blip_boot, axis = 0)
+dataset = np.append(dataset, fast_scattering_boot, axis = 0)
+dataset = np.append(dataset, koyfish_boot, axis = 0)
+dataset = np.append(dataset, lowfreq_boot, axis = 0)
+dataset = np.append(dataset, tomte_boot, axis = 0)
+dataset = np.append(dataset, whistle_boot, axis = 0)
+
+np.random.shuffle(dataset)
+
+np.save('../datasets/dataset_all_h1.npy', dataset)
+print("saved")
