@@ -21,7 +21,7 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
-data = np.load("../datasets/dataset_all_h1_bootstrap.npy")
+data = np.load("../datasets/dataset_all_h1.npy")
 X = data[:,:-1]
 y = data[:,-1]
 
@@ -47,8 +47,8 @@ lr = 1e-3
 activation = nn.ReLU()
 a = "ReLU"
 
-model = Perceptron()
-m = "Perceptron"
+model = VariableNet(n_units = n_units, n_layers = n_layers, a = a)
+m = "VariableNet"
 print(model)
 
 # specifications for compiling the model

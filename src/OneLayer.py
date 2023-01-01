@@ -11,7 +11,7 @@ class OneLayer(nn.Module):
         super().__init__()
 
         if a == "ReLU":
-            self.activation = nn.ReLU()
+            self.activation = nn.ReLU
 
         self.output = nn.Sequential(
             nn.Linear(6, n_units),
