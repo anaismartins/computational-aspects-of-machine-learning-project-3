@@ -1,13 +1,13 @@
 import torch
 from torch import nn
 
-def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr = 0.01, epochs = 200):
+def train_model(train_dataloader, test_dataloader, model, act, loss_fn, optimizer, lr = 0.01, epochs = 200):
     train_accuracies, test_accuracies = [], []
 
     for epoch in range(epochs):
         for X, y in train_dataloader:
             pred = model(X)
-            pred_labels = torch.argmax(pred, axis=1)
+            pred_labels = act(pred)
             loss = loss_fn(pred, y)
             optimizer.zero_grad()
             loss.backward()

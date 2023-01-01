@@ -21,7 +21,7 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
-data = np.load("../datasets/dataset_all_h1.npy")
+data = np.load("../datasets/dataset_all_h1_bootstrap.npy")
 X = data[:,:-1]
 y = data[:,-1]
 
@@ -58,6 +58,10 @@ l = "CrossEntropyLoss"
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 o = "Adam"
 
-train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr = lr, epochs = epochs)
+# final activation fucntion
+act = nn.Softmax(dim=1)
+a2 = "Softmax"
 
-plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_units, n_layers)
+train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, act, loss_fn, optimizer, lr = lr, epochs = epochs)
+
+plot_results(train_accuracies, test_accuracies, m, a, a2, l, o, lr, epochs, n_units, n_layers)
