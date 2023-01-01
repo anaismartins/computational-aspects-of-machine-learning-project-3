@@ -17,7 +17,7 @@ def bootstrap(glitch):
     col = []
     nums = np.array([])
 
-    for n in range(0, 6):
+    for n in range(0, 7):
         for i in range(0, 100):
             for j in range (0, glitch.shape[0]):
                 col.append(glitch[j][n])
@@ -31,7 +31,7 @@ def bootstrap(glitch):
         nums = np.array([]) 
         col = []
 
-    result = [[]]
+    result = [[glitch_boot[j][i] for j in range(len(glitch_boot))] for i in range(len(glitch_boot[0]))]
 
     for i in range(len(glitch_boot)):
         for j in range(len(glitch_boot[0])):
@@ -48,8 +48,6 @@ whistle_boot = bootstrap(whistles)
 
 injection_boot = injections[0:round(biggest/100)]
 
-print(len(blip_boot))
-
 dataset = np.append(injection_boot, blip_boot, axis = 0)
 dataset = np.append(dataset, fast_scattering_boot, axis = 0)
 dataset = np.append(dataset, koyfish_boot, axis = 0)
@@ -59,5 +57,5 @@ dataset = np.append(dataset, whistle_boot, axis = 0)
 
 np.random.shuffle(dataset)
 
-np.save('../datasets/dataset_all_h1.npy', dataset)
-print("saved")
+np.save('../datasets/dataset_all_h1_bootstrap.npy', dataset)
+print("Saved.")

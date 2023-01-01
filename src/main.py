@@ -47,8 +47,8 @@ lr = 1e-3
 activation = nn.ReLU()
 a = "ReLU"
 
-model = VariableNet(n_units, n_layers, a)
-m = "VariableNet"
+model = Perceptron()
+m = "Perceptron"
 print(model)
 
 # specifications for compiling the model

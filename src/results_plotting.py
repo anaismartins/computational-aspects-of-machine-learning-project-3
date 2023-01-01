@@ -34,7 +34,7 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
     if m == "Perceptron":
         # bool for checking if we already have this model
         exists = False
-        filename = "Perceptron_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs.png"
+        filename = "Perceptron_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs.png"
 
         # check if there is a perceptron already and delete it
         for file in dir_list:
