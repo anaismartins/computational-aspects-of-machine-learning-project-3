@@ -21,7 +21,7 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
-data = np.load("../datasets/dataset_all_h1.npy")
+data = np.load("../datasets/dataset_all_h1_bootstrap.npy")
 X = data[:,:-1]
 y = data[:,-1]
 
