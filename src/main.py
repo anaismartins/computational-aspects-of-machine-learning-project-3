@@ -42,26 +42,22 @@ test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # 
 # SPECIFY THE MODEL HERE ---------------------------------------------
 n_units = 10 # generally 10 to 512
 n_layers = 2
-lr = 1e-3
+lr = 1e-5
 
-activation = nn.ReLU()
 a = "ReLU"
 
-model = VariableNet(n_units = n_units, n_layers = n_layers, a = a)
-m = "VariableNet"
+model = OneLayer(n_units, a)
+m = "OneLayer"
 print(model)
 
 # specifications for compiling the model
-epochs = 200
+epochs = 20000
 loss_fn = nn.CrossEntropyLoss()
 l = "CrossEntropyLoss"
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 o = "Adam"
 
-# final activation fucntion
-act = nn.Softmax(dim=1)
-a2 = "Softmax"
 
-train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, act, loss_fn, optimizer, lr = lr, epochs = epochs)
+train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr = lr, epochs = epochs)
 
-plot_results(train_accuracies, test_accuracies, m, a, a2, l, o, lr, epochs, n_units, n_layers)
+plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_units, n_layers)
