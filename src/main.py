@@ -21,7 +21,8 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
-data = np.load("../datasets/dataset_all_h1_bootstrap.npy")
+data = np.load("../datasets/dataset_all_h1_bootstrap.npy") # uncomment this line to use the bootstrap dataset
+#data = np.load("../datasets/dataset_all_h1.npy") # uncomment this line to use the original dataset
 X = data[:,:-1]
 y = data[:,-1]
 
@@ -46,8 +47,11 @@ lr = 1e-5
 
 a = "ReLU"
 
-model = OneLayer(n_units, a)
-m = "OneLayer"
+#model = OneLayer(n_units, a)
+#m = "OneLayer"
+
+model = VariableNet(n_units, n_layers, a)
+m = "VariableNet"
 print(model)
 
 # specifications for compiling the model
