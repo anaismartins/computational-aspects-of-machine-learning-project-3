@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr = 0.01, epochs = 200):
+def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = 200):
     train_accuracies, test_accuracies = [], []
 
     for epoch in range(epochs):
@@ -23,5 +23,8 @@ def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr
         pred_labels = torch.argmax(model(X), axis = 1)
         test_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
         print(f"Epoch {epoch+1} | Test accuracy: {test_accuracies[-1]:.2f}%")
+
+        # Update the learning rate
+        lr_scheduler.step(test_accuracies[-1])
 
     return train_accuracies, test_accuracies
