@@ -45,8 +45,8 @@ test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # 
 n_units = 20 # generally 10 to 512
 n_layers = 3
 lr = 1e-3
-lr_decay_factor = 0.1 # factor by which the learning rate will be reduced
-lr_decay_patience = 100 # number of epochs with no improvement after which learning rate will be reduced
+lr_decay_factor = 0.9 # factor by which the learning rate will be multiplied
+lr_decay_patience = 50 # number of epochs with no improvement after which learning rate will be reduced
 
 a = "ReLU"
 

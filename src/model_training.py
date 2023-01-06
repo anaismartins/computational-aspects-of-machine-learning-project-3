@@ -25,6 +25,10 @@ def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr
         print(f"Epoch {epoch+1} | Test accuracy: {test_accuracies[-1]:.2f}%")
 
         # Update the learning rate
+        old_lr = optimizer.param_groups[0]['lr']
         lr_scheduler.step(test_accuracies[-1])
+        new_lr = optimizer.param_groups[0]['lr']
+        if old_lr != new_lr:
+            print(f"Learning rate updated from {old_lr:.6f} to {new_lr:.6f}")
 
     return train_accuracies, test_accuracies
