@@ -42,8 +42,8 @@ train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size)
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
 # SPECIFY THE MODEL HERE ---------------------------------------------
-n_units = 10 # generally 10 to 512
-n_layers = 4
+n_units = 20 # generally 10 to 512
+n_layers = 3
 lr = 1e-5
 
 a = "ReLU"
@@ -53,6 +53,7 @@ a = "ReLU"
 
 model = VariableNet(n_units, n_layers, a)
 m = "VariableNet"
+
 print(model)
 
 # specifications for the loss function

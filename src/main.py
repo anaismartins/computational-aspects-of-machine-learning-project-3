@@ -11,6 +11,7 @@ from sklearn.model_selection import train_test_split
 import torch
 from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
+import torch.optim.lr_scheduler as lr_scheduler
 
 # my modules
 import globals as g
@@ -41,9 +42,11 @@ train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size)
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
 # SPECIFY THE MODEL HERE ---------------------------------------------
-n_units = 10 # generally 10 to 512
-n_layers = 2
-lr = 1e-5
+n_units = 20 # generally 10 to 512
+n_layers = 4
+lr = 1e-4
+lr_decay_factor = 0.1 # factor by which the learning rate will be reduced
+lr_decay_patience = 100 # number of epochs with no improvement after which learning rate will be reduced
 
 a = "ReLU"
 
@@ -54,14 +57,18 @@ model = VariableNet(n_units, n_layers, a)
 m = "VariableNet"
 print(model)
 
+# specifications for the loss function
+class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1]) #[injection, blips, fast scattering, koyfish, lowfreq, tomte, whistle]
+loss_fn = nn.CrossEntropyLoss(weight=class_weights)
+l = "CrossEntropyLoss"
+
 # specifications for compiling the model
 epochs = 20000
-loss_fn = nn.CrossEntropyLoss()
-l = "CrossEntropyLoss"
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = lr_decay_factor, patience = lr_decay_patience)
 o = "Adam"
 
 
-train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr = lr, epochs = epochs)
+train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = epochs)
 
 plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_units, n_layers)
