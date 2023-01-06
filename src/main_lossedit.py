@@ -21,7 +21,9 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
-data = np.load("../datasets/dataset_all_h1_bootstrap.npy")
+data = np.load("../datasets/dataset_all_h1_bootstrap.npy") # uncomment this line to use the bootstrap dataset
+#data = np.load("../datasets/dataset_all_h1.npy") # uncomment this line to use the original dataset
+
 X = data[:,:-1]
 y = data[:,-1]
 
@@ -41,8 +43,7 @@ test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # 
 
 # SPECIFY THE MODEL HERE ---------------------------------------------
 n_units = 10 # generally 10 to 512
-n_layers = 2
-n_classes = 3
+n_layers = 4
 lr = 1e-5
 
 a = "ReLU"
@@ -54,10 +55,13 @@ model = VariableNet(n_units, n_layers, a)
 m = "VariableNet"
 print(model)
 
-# specifications for compiling the model
-epochs = 10000
-loss_fn = nn.CrossEntropyLoss()
+# specifications for the loss function
+class_weights = torch.FloatTensor([1, 2, 2, 2, 2, 2, 2]) #[injection, blips, fast scattering, koyfish, lowfreq, tomte, whistle]
+loss_fn = nn.CrossEntropyLoss(weight=class_weights)
 l = "CrossEntropyLoss"
+
+# specifications for compiling the model
+epochs = 20000
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 o = "Adam"
 
