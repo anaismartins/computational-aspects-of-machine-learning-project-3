@@ -3,6 +3,7 @@ from torch import nn
 
 def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = 200):
     train_accuracies, test_accuracies = [], []
+    stored_loss = []
 
     for epoch in range(epochs):
         for X, y in train_dataloader:
@@ -16,6 +17,11 @@ def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr
             optimizer.step()
 
         train_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
+
+        if (epoch > 100):
+            if (train_accuracies[epoch-100] - train_accuracies[epoch] < 0.1):
+                final_epoch = epoch
+                break
 
         X, y = next(iter(test_dataloader))
         #y_pred = torch.log_softmax(model(X), dim = 1)
@@ -31,4 +37,4 @@ def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr
         if old_lr != new_lr:
             print(f"Learning rate updated from {old_lr:.6f} to {new_lr:.6f}")
 
-    return train_accuracies, test_accuracies
+    return train_accuracies, test_accuracies, final_epoch
