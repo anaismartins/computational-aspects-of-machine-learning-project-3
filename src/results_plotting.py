@@ -48,6 +48,8 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
         if not exists:
             plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_" + filename)
 
+        print("Perceptron results saved to results folder. (If it already existed, it was overwritten.")
+
     elif m == "VariableNet":
         # bool for checking if we already have this model
         exists = False
@@ -65,6 +67,8 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
         if not exists: 
             plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_" + filename)
 
+        print("VariableNet results saved to results folder. (If it already existed, it was overwritten.")
+
     elif m == "OneLayer":
         # bool for checking if we already have this model
         exists = False
@@ -81,3 +85,5 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
 
         if not exists:
             plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + "Acc_H1_" + filename)
+
+        print("OneLayer results saved to results folder. (If it already existed, it was overwritten.")

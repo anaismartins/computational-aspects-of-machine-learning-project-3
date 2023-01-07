@@ -18,17 +18,17 @@ def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr
 
         train_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
 
-        if (epoch > 100):
-            if (train_accuracies[epoch-100] - train_accuracies[epoch] < 0.1):
-                final_epoch = epoch
-                break
-
         X, y = next(iter(test_dataloader))
         #y_pred = torch.log_softmax(model(X), dim = 1)
         #_, pred_labels = torch.max(y_pred, dim = 1) 
         pred_labels = torch.argmax(model(X), axis = 1)
         test_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
         print(f"Epoch {epoch+1} | Test accuracy: {test_accuracies[-1]:.2f}%")
+
+        if (epoch > 100):
+            if (abs(test_accuracies[epoch-100] - test_accuracies[epoch]) < 0.01):
+                final_epoch = epoch
+                break
 
         # Update the learning rate
         old_lr = optimizer.param_groups[0]['lr']
