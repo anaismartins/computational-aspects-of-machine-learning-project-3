@@ -51,8 +51,8 @@ a = "ReLU"
 #model = OneLayer(n_units, a)
 #m = "OneLayer"
 
-model = VariableNet(n_units, n_layers, a)
-m = "VariableNet"
+model = Perceptron()
+m = "Perceptron"
 
 print(model)
 
@@ -67,6 +67,6 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 o = "Adam"
 
 
-train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr = lr, epochs = epochs)
+train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler = lr, epochs = epochs)
 
 plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_units, n_layers)
