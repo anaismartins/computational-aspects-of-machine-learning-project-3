@@ -1,15 +1,19 @@
 import random
 import numpy as np
 
-injections = np.load("../datasets/injection_triggers.npy")
-blips = np.load("../datasets/blip_triggers.npy")
-fast_scatterings = np.load("../datasets/fast_scattering_triggers.npy")
-koyfishes = np.load("../datasets/koyfish_triggers.npy")
-lowfreqs = np.load("../datasets/lowfreq_triggers.npy")
-tomtes = np.load("../datasets/tomte_triggers.npy")
-whistles = np.load("../datasets/whistle_triggers.npy")
+detector = "L1"
 
-biggest = 2649
+injections = np.load("../datasets/injection_triggers_" + detector + ".npy")
+blips = np.load("../datasets/blip_triggers_" + detector + ".npy")
+fast_scatterings = np.load("../datasets/fast_scattering_triggers_" + detector + ".npy")
+koyfishes = np.load("../datasets/koyfish_triggers_" + detector + ".npy")
+lowfreqs = np.load("../datasets/lowfreq_triggers_" + detector + ".npy")
+tomtes = np.load("../datasets/tomte_triggers_" + detector + ".npy")
+whistles = np.load("../datasets/whistle_triggers_" + detector + ".npy")
+
+biggest = max(len(blips), len(fast_scatterings), len(koyfishes), len(lowfreqs), len(tomtes), len(whistles))
+
+print("biggest: " + str(biggest))
 
 #blips
 def bootstrap(glitch):
@@ -57,5 +61,5 @@ dataset = np.append(dataset, whistle_boot, axis = 0)
 
 np.random.shuffle(dataset)
 
-np.save('../datasets/dataset_all_h1_bootstrap.npy', dataset)
+np.save('../datasets/dataset_all_' + detector + '_bootstrap.npy', dataset)
 print("Saved.")

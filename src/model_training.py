@@ -25,8 +25,8 @@ def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr
         test_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
         print(f"Epoch {epoch+1} | Test accuracy: {test_accuracies[-1]:.2f}%")
 
-        if (epoch > 100):
-            if (abs(test_accuracies[epoch-100] - test_accuracies[epoch]) < 0.01):
+        if (epoch > 200):
+            if (abs(test_accuracies[epoch-200] - test_accuracies[epoch]) < 0.01):
                 final_epoch = epoch
                 break
 
