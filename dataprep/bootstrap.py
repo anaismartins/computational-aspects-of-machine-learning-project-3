@@ -1,21 +1,24 @@
 import random
 import numpy as np
 
-detector = "L1"
+detector = "V1"
 
 injections = np.load("../datasets/injection_triggers_" + detector + ".npy")
 blips = np.load("../datasets/blip_triggers_" + detector + ".npy")
-fast_scatterings = np.load("../datasets/fast_scattering_triggers_" + detector + ".npy")
+if detector != "V1":
+    fast_scatterings = np.load("../datasets/fast_scattering_triggers_" + detector + ".npy")
 koyfishes = np.load("../datasets/koyfish_triggers_" + detector + ".npy")
 lowfreqs = np.load("../datasets/lowfreq_triggers_" + detector + ".npy")
 tomtes = np.load("../datasets/tomte_triggers_" + detector + ".npy")
 whistles = np.load("../datasets/whistle_triggers_" + detector + ".npy")
 
-biggest = max(len(blips), len(fast_scatterings), len(koyfishes), len(lowfreqs), len(tomtes), len(whistles))
+if detector != "V1":
+    biggest = max(len(blips), len(fast_scatterings), len(koyfishes), len(lowfreqs), len(tomtes), len(whistles))
+else:
+    biggest = max(len(blips), len(koyfishes), len(lowfreqs), len(tomtes), len(whistles))
 
 print("biggest: " + str(biggest))
 
-#blips
 def bootstrap(glitch):
     glitch_boot = [[]]
     col = []
@@ -44,7 +47,8 @@ def bootstrap(glitch):
     return result
 
 blip_boot = bootstrap(blips)
-fast_scattering_boot = bootstrap(fast_scatterings)
+if detector != "V1":
+    fast_scattering_boot = bootstrap(fast_scatterings)
 koyfish_boot = bootstrap(koyfishes)
 lowfreq_boot = bootstrap(lowfreqs)
 tomte_boot = bootstrap(tomtes)
@@ -53,7 +57,8 @@ whistle_boot = bootstrap(whistles)
 injection_boot = injections[0:round(biggest/100)]
 
 dataset = np.append(injection_boot, blip_boot, axis = 0)
-dataset = np.append(dataset, fast_scattering_boot, axis = 0)
+if detector != "V1":
+    dataset = np.append(dataset, fast_scattering_boot, axis = 0)
 dataset = np.append(dataset, koyfish_boot, axis = 0)
 dataset = np.append(dataset, lowfreq_boot, axis = 0)
 dataset = np.append(dataset, tomte_boot, axis = 0)

@@ -2,7 +2,7 @@ from torch import nn
 import torch.nn.functional as F
 
 class VariableNet(nn.Module):
-    def __init__(self, n_units, n_layers, a):
+    def __init__(self, num_classes, n_units, n_layers, a):
         super().__init__()
 
         if a == "ReLU":
@@ -17,7 +17,7 @@ class VariableNet(nn.Module):
         for i in range(1, self.n_layers + 1):
             self.layer.append(nn.Linear(n_units, n_units))
 
-        self.layer.append(nn.Linear(n_units, 7))
+        self.layer.append(nn.Linear(n_units, num_classes))
 
     def forward(self, x):
         x = self.layer[0](x)
