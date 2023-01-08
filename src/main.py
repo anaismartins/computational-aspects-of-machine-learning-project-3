@@ -22,7 +22,12 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
-detector = "L1"
+detector = "V1"
+
+if detector != "V1":
+    num_classes = 7
+else:
+    num_classes = 6
 
 data = np.load("../datasets/dataset_all_" + detector + "_bootstrap.npy") # uncomment this line to use the bootstrap dataset
 #data = np.load("../datasets/dataset_all_h1.npy") # uncomment this line to use the original dataset
@@ -55,7 +60,7 @@ a = "ReLU"
 #model = OneLayer(n_units, a)
 #m = "OneLayer"
 
-model = Perceptron()
+model = Perceptron(num_classes)
 m = "Perceptron"
 print(model)
 
