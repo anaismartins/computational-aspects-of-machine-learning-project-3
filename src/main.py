@@ -22,7 +22,7 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
-detector = "V1"
+detector = "H1"
 
 if detector != "V1":
     num_classes = 7
@@ -64,11 +64,23 @@ model = Perceptron(num_classes)
 m = "Perceptron"
 print(model)
 
+i = 0
+
+with open("../dataprep/datasize.txt", 'r') as f:
+    for line in f:
+        if i == 0:
+            biggest = round(int(line)/100)*100
+            i += 1
+        if i == 1:
+            injection_size = int(line)
+
+size_ratio = biggest/injection_size
+
 # specifications for the loss function
 if detector != "V1":
-    class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1]) #[injection, blips, fast scattering, koyfish, lowfreq, tomte, whistle]
+    class_weights = torch.FloatTensor([size_ratio, 1, 1, 1, 1, 1, 1]) #[injection, blips, fast scattering, koyfish, lowfreq, tomte, whistle]
 else:
-    class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle]
+    class_weights = torch.FloatTensor([size_ratio, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle]
 loss_fn = nn.CrossEntropyLoss(weight=class_weights)
 l = "CrossEntropyLoss"
 
