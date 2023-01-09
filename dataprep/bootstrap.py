@@ -17,6 +17,9 @@ if detector != "V1":
 else:
     biggest = max(len(blips), len(koyfishes), len(lowfreqs), len(tomtes), len(whistles))
 
+with open("datasize.txt", "w") as f:
+    f.write(str(biggest + "\n" + len(injections)))
+
 print("biggest: " + str(biggest))
 
 def bootstrap(glitch):
