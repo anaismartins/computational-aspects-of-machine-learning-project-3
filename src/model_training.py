@@ -1,5 +1,10 @@
 import torch
 from torch import nn
+from sklearn.metrics import confusion_matrix
+import seaborn as sn
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = 200):
     train_accuracies, test_accuracies = [], []
@@ -22,12 +27,19 @@ def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr
         #y_pred = torch.log_softmax(model(X), dim = 1)
         #_, pred_labels = torch.max(y_pred, dim = 1) 
         pred_labels = torch.argmax(model(X), axis = 1)
+
+        cf_matrix = confusion_matrix(y, pred_labels)
+
         test_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
         print(f"Epoch {epoch+1} | Test accuracy: {test_accuracies[-1]:.2f}%")
 
         if (epoch > 200):
             if (abs(test_accuracies[epoch-200] - test_accuracies[epoch]) < 0.01):
                 final_epoch = epoch
+                df_cm = pd.DataFrame(cf_matrix/np.sum(cf_matrix) *10, index = [i for i in range(0, 7)], columns = [i for i in range(0, 7)])
+                plt.figure(figsize = (12,7))
+                sn.heatmap(df_cm, annot=True)
+                plt.savefig('output.png')
                 break
 
         # Update the learning rate

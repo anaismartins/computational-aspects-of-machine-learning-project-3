@@ -55,8 +55,8 @@ lowfreq_boot = bootstrap(lowfreqs)
 tomte_boot = bootstrap(tomtes)
 whistle_boot = bootstrap(whistles)
 
-injection_boot = injections
-#injection_boot = injections[0:round(biggest/100)]
+#injection_boot = injections
+injection_boot = injections[0:round(biggest/100)]
 
 dataset = np.append(injection_boot, blip_boot, axis = 0)
 if detector != "V1":
