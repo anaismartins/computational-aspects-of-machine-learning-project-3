@@ -22,7 +22,14 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
-data = np.load("../datasets/dataset_all_h1_bootstrap.npy") # uncomment this line to use the bootstrap dataset
+detector = "H1"
+
+if detector != "V1":
+    num_classes = 7
+else:
+    num_classes = 6
+
+data = np.load("../datasets/dataset_all_" + detector + "_bootstrap.npy") # uncomment this line to use the bootstrap dataset
 #data = np.load("../datasets/dataset_all_h1.npy") # uncomment this line to use the original dataset
 X = data[:,:-1]
 y = data[:,-1]
@@ -42,8 +49,8 @@ train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size)
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
 # SPECIFY THE MODEL HERE ---------------------------------------------
-n_units = 20 # generally 10 to 512
-n_layers = 3
+n_units = 512 # generally 10 to 512
+n_layers = 10
 lr = 1e-3
 lr_decay_factor = 0.9 # factor by which the learning rate will be multiplied
 lr_decay_patience = 50 # number of epochs with no improvement after which learning rate will be reduced
@@ -53,22 +60,36 @@ a = "ReLU"
 #model = OneLayer(n_units, a)
 #m = "OneLayer"
 
-model = VariableNet(n_units, n_layers, a)
-m = "VariableNet"
+model = Perceptron(num_classes)
+m = "Perceptron"
 print(model)
 
+i = 0
+
+with open("../dataprep/datasize.txt", 'r') as f:
+    for line in f:
+        if i == 0:
+            biggest = round(int(line)/100)*100
+            i += 1
+        if i == 1:
+            injection_size = int(line)
+
+size_ratio = biggest/injection_size
+
 # specifications for the loss function
-class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1]) #[injection, blips, fast scattering, koyfish, lowfreq, tomte, whistle]
+if detector != "V1":
+    class_weights = torch.FloatTensor([size_ratio, 1, 1, 1, 1, 1, 1]) #[injection, blips, fast scattering, koyfish, lowfreq, tomte, whistle]
+else:
+    class_weights = torch.FloatTensor([size_ratio, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle]
 loss_fn = nn.CrossEntropyLoss(weight=class_weights)
 l = "CrossEntropyLoss"
 
 # specifications for compiling the model
-epochs = 2000
+epochs = 20000
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = lr_decay_factor, patience = lr_decay_patience)
 o = "Adam"
 
+train_accuracies, test_accuracies, final_epoch = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = max_epochs)
 
-train_accuracies, test_accuracies = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = epochs)
-
-plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_units, n_layers)
+plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, final_epoch, n_units, n_layers, detector = detector)

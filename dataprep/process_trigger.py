@@ -13,32 +13,26 @@ whistle_files = []
 #folder_path = '/home/jonno/ML_Course/ML_data/'
 folder_path = "../../../lopezm/ML_projects/Projects_2022/Project_3/Data/dataframes/" 
 
+detector = "V1"
+
 # Iterate over all files in the given folder
 for filename in os.listdir(folder_path):
     # Check if the file is a CSV file
     if filename.endswith(".csv"):
         #Check what type of data the file contains and put in in the corresponding list.
-        if filename.startswith("Blip_H1"):
+        if filename.startswith("Blip_" + detector):
             blip_files.append((os.path.join(folder_path, filename)))
-        elif filename.startswith("Fast_Scattering_H1"):
-            fast_scattering_files.append((os.path.join(folder_path, filename)))            
-        elif filename.startswith("Fast_Scattering_H1"):
-            fast_scattering_files.append((os.path.join(folder_path, filename)))            
-        elif filename.startswith("Injections_H1"):
+        elif filename.startswith("Fast_Scattering_" + detector) and (detector != "V1"):
+            fast_scattering_files.append((os.path.join(folder_path, filename)))                      
+        elif filename.startswith("Injections_" + detector):
             injection_files.append((os.path.join(folder_path, filename)))       
-        elif filename.startswith("KoyFish_H1"):
+        elif filename.startswith("KoyFish_" + detector):
             koyfish_files.append((os.path.join(folder_path, filename)))
-        elif filename.startswith("Low_freq_burst_H1"):
+        elif filename.startswith("Low_freq_burst_" + detector):
             lowfreq_files.append((os.path.join(folder_path, filename)))
-        elif filename.startswith("Tomte_H1"):
+        elif filename.startswith("Tomte_" + detector):
             tomte_files.append((os.path.join(folder_path, filename)))
-        elif filename.startswith("Whistle_H1"):
-            whistle_files.append((os.path.join(folder_path, filename)))    
-        elif filename.startswith("Low_freq_burst_H1"):
-            lowfreq_files.append((os.path.join(folder_path, filename)))
-        elif filename.startswith("Tomte_H1"):
-            tomte_files.append((os.path.join(folder_path, filename)))
-        elif filename.startswith("Whistle_H1"):
+        elif filename.startswith("Whistle_" + detector):
             whistle_files.append((os.path.join(folder_path, filename)))    
 
 #Now this function must be edited so that it reads the csv files from e.g. the koyfish_files array
@@ -135,33 +129,36 @@ def read_triggers(read_paths, trigger_id, weighted_average = False):
 
 injection_triggers = read_triggers(injection_files, 0)
 blip_triggers = read_triggers(blip_files, 1)
-fast_scattering_triggers = read_triggers(fast_scattering_files, 2)
-koyfish_triggers = read_triggers(koyfish_files, 3)
-lowfreq_triggers = read_triggers(lowfreq_files, 4)
-tomte_triggers = read_triggers(tomte_files, 5)
-whistle_triggers = read_triggers(whistle_files, 6)
+koyfish_triggers = read_triggers(koyfish_files, 2)
+lowfreq_triggers = read_triggers(lowfreq_files, 3)
+tomte_triggers = read_triggers(tomte_files, 4)
+whistle_triggers = read_triggers(whistle_files, 5)
+if detector != 'V1':
+    fast_scattering_triggers = read_triggers(fast_scattering_files, 6)
 
-np.save('../datasets/injection_triggers.npy', injection_triggers)
-np.save('../datasets/blip_triggers.npy', blip_triggers)
-np.save('../datasets/fast_scattering_triggers.npy', fast_scattering_triggers)
-np.save('../datasets/koyfish_triggers.npy', koyfish_triggers)
-np.save('../datasets/lowfreq_triggers.npy', lowfreq_triggers)
-np.save('../datasets/tomte_triggers.npy', tomte_triggers)
-np.save('../datasets/whistle_triggers.npy', whistle_triggers)
+np.save('../datasets/injection_triggers_' + detector + '.npy', injection_triggers)
+np.save('../datasets/blip_triggers_' + detector + '.npy', blip_triggers)
+if detector != 'V1':
+    np.save('../datasets/fast_scattering_triggers_' + detector + '.npy', fast_scattering_triggers)
+np.save('../datasets/koyfish_triggers_' + detector + '.npy', koyfish_triggers)
+np.save('../datasets/lowfreq_triggers_' + detector + '.npy', lowfreq_triggers)
+np.save('../datasets/tomte_triggers_' + detector + '.npy', tomte_triggers)
+np.save('../datasets/whistle_triggers_' + detector + '.npy', whistle_triggers)
 
-injection_triggers = injection_triggers[0:fast_scattering_triggers.shape[0]]
-blip_triggers = blip_triggers[0:fast_scattering_triggers.shape[0]]
-koyfish_triggers = koyfish_triggers[0:fast_scattering_triggers.shape[0]]
-lowfreq_triggers = lowfreq_triggers[0:fast_scattering_triggers.shape[0]]
-tomte_triggers = tomte_triggers[0:fast_scattering_triggers.shape[0]]
-whistle_triggers = whistle_triggers[0:fast_scattering_triggers.shape[0]]
+if detector != 'V1':
+    injection_triggers = injection_triggers[0:fast_scattering_triggers.shape[0]]
+    blip_triggers = blip_triggers[0:fast_scattering_triggers.shape[0]]
+    koyfish_triggers = koyfish_triggers[0:fast_scattering_triggers.shape[0]]
+    lowfreq_triggers = lowfreq_triggers[0:fast_scattering_triggers.shape[0]]
+    tomte_triggers = tomte_triggers[0:fast_scattering_triggers.shape[0]]
+    whistle_triggers = whistle_triggers[0:fast_scattering_triggers.shape[0]]
 
-dataset = np.append(injection_triggers, blip_triggers, axis = 0)
-dataset = np.append(dataset, fast_scattering_triggers, axis = 0)
-dataset = np.append(dataset, koyfish_triggers, axis = 0)
-dataset = np.append(dataset, lowfreq_triggers, axis = 0)
-dataset = np.append(dataset, tomte_triggers, axis = 0)
-dataset = np.append(dataset, whistle_triggers, axis = 0)
-np.random.shuffle(dataset)
+    dataset = np.append(injection_triggers, blip_triggers, axis = 0)
+    dataset = np.append(dataset, fast_scattering_triggers, axis = 0)
+    dataset = np.append(dataset, koyfish_triggers, axis = 0)
+    dataset = np.append(dataset, lowfreq_triggers, axis = 0)
+    dataset = np.append(dataset, tomte_triggers, axis = 0)
+    dataset = np.append(dataset, whistle_triggers, axis = 0)
+    np.random.shuffle(dataset)
 
-np.save('../datasets/dataset_all_h1.npy', dataset)
+    np.save('../datasets/dataset_all_' + detector + '.npy', dataset)
