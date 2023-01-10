@@ -86,7 +86,7 @@ loss_fn = nn.CrossEntropyLoss(weight=class_weights)
 l = "CrossEntropyLoss"
 
 # specifications for compiling the model
-max_epochs = 100000
+epochs = 20000
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = lr_decay_factor, patience = lr_decay_patience)
 o = "Adam"
