@@ -75,6 +75,7 @@ with open("../dataprep/datasize.txt", 'r') as f:
             injection_size = int(line)
 
 size_ratio = biggest/injection_size
+size_ratio = 1
 
 # specifications for the loss function
 if detector != "V1":
