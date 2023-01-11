@@ -127,14 +127,14 @@ def read_triggers(read_paths, trigger_id, weighted_average = False):
     
     return all_triggers
 
-injection_triggers = read_triggers(injection_files, 0)
-blip_triggers = read_triggers(blip_files, 1)
-koyfish_triggers = read_triggers(koyfish_files, 2)
-lowfreq_triggers = read_triggers(lowfreq_files, 3)
-tomte_triggers = read_triggers(tomte_files, 4)
-whistle_triggers = read_triggers(whistle_files, 5)
+injection_triggers = read_triggers(injection_files, 0, True)
+blip_triggers = read_triggers(blip_files, 1, True)
+koyfish_triggers = read_triggers(koyfish_files, 2, True)
+lowfreq_triggers = read_triggers(lowfreq_files, 3, True)
+tomte_triggers = read_triggers(tomte_files, 4, True)
+whistle_triggers = read_triggers(whistle_files, 5, True)
 if detector != 'V1':
-    fast_scattering_triggers = read_triggers(fast_scattering_files, 6)
+    fast_scattering_triggers = read_triggers(fast_scattering_files, 6, True)
 
 np.save('../datasets/injection_triggers_' + detector + '.npy', injection_triggers)
 np.save('../datasets/blip_triggers_' + detector + '.npy', blip_triggers)
