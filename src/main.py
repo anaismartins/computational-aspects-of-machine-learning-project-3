@@ -22,6 +22,7 @@ from OneLayer import OneLayer
 from model_training import train_model
 from results_plotting import plot_results
 
+# DEFINE DETECTOR ----------------------------------------------------
 detector = "H1"
 
 if detector != "V1":
@@ -29,6 +30,8 @@ if detector != "V1":
 else:
     num_classes = 6
 
+
+# LOAD DATA AND SPLIT INTO TRAIN AND TEST -----------------------------
 data = np.load("../datasets/dataset_all_" + detector + "_bootstrap.npy") # uncomment this line to use the bootstrap dataset
 #data = np.load("../datasets/dataset_all_h1.npy") # uncomment this line to use the original dataset
 X = data[:,:-1]
@@ -42,30 +45,33 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random
 
 train_data = TensorDataset(X_train, y_train)
 test_data = TensorDataset(X_test, y_test)
-
-batch_size = round(len(train_data.tensors[0])/20)
+#setting batch size to have 20 batches per epoch
+num_batches = 10
+batch_size = round(len(train_data.tensors[0])/num_batches)
 
 train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size) 
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
-# SPECIFY THE MODEL HERE ---------------------------------------------
+
+# MODEL SPECS -------------------------------------------------------
 n_units = 512 # generally 10 to 512
 n_layers = 10
-lr = 1e-3
-lr_decay_factor = 0.9 # factor by which the learning rate will be multiplied
-lr_decay_patience = 50 # number of epochs with no improvement after which learning rate will be reduced
-
 a = "ReLU"
-
-#model = OneLayer(n_units, a)
-#m = "OneLayer"
 
 model = OneLayer(num_classes, n_units, a)
 m = "OneLayer"
 print(model)
 
-i = 0
 
+# LOSS AND OPTIMIZER -------------------------------------------------
+init_lr = 1e-3
+
+# optimzer
+o = "Adam"
+optimizer = torch.optim.Adam(model.parameters(), lr=init_lr)
+
+# getting ratio between data sizes
+i = 0
 with open("../dataprep/datasize.txt", 'r') as f:
     for line in f:
         if i == 0:
@@ -75,22 +81,25 @@ with open("../dataprep/datasize.txt", 'r') as f:
             injection_size = int(line)
 
 size_ratio = biggest/injection_size
-#size_ratio = 1
+#size_ratio = 1 #uncomment if data is all the same size
 
-# specifications for the loss function
+# setting weights for loss function
+l = "CrossEntropyLoss"
 if detector != "V1":
     class_weights = torch.FloatTensor([size_ratio, 1, 1, 1, 1, 1, 1]) #[injection, blips, fast scattering, koyfish, lowfreq, tomte, whistle]
 else:
     class_weights = torch.FloatTensor([size_ratio, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle]
 loss_fn = nn.CrossEntropyLoss(weight=class_weights)
-l = "CrossEntropyLoss"
 
-# specifications for compiling the model
-max_epochs = 20000
-optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+# smart learning rate
+lr_decay_factor = 0.9 # factor by which the learning rate will be multiplied
+lr_decay_patience = 50 # number of epochs with no improvement after which learning rate will be reduced
+
 lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = lr_decay_factor, patience = lr_decay_patience)
-o = "Adam"
 
+
+# TRAINING, TESTING AND PLOTTING ------------------------------------
+max_epochs = 200000
 train_accuracies, test_accuracies, final_epoch = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = max_epochs)
 
-plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, final_epoch, n_units, n_layers, detector = detector)
+plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, final_epoch, n_units, n_layers, detector = detector, num_batches = num_batches)
