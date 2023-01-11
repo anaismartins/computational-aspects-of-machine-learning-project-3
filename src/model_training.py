@@ -28,18 +28,20 @@ def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr
         #_, pred_labels = torch.max(y_pred, dim = 1) 
         pred_labels = torch.argmax(model(X), axis = 1)
 
-        cf_matrix = confusion_matrix(y, pred_labels)
-
         test_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
         print(f"Epoch {epoch+1} | Test accuracy: {test_accuracies[-1]:.2f}%")
 
         if (epoch > 200):
             if (abs(test_accuracies[epoch-200] - test_accuracies[epoch]) < 0.01):
                 final_epoch = epoch
-                df_cm = pd.DataFrame(cf_matrix/np.sum(cf_matrix) *10, index = [i for i in range(0, 7)], columns = [i for i in range(0, 7)])
+
+                classes = ("Injection", "Blip", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering")
+                cf_matrix = confusion_matrix(y, pred_labels, normalize = 'true')
+                df_cm = pd.DataFrame(cf_matrix/np.sum(cf_matrix) *10, index = [i for i in classes], columns = [i for i in classes])
                 plt.figure(figsize = (12,7))
                 sn.heatmap(df_cm, annot=True)
                 plt.savefig('output.png')
+
                 break
 
         # Update the learning rate
