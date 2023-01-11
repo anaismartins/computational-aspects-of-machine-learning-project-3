@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 def train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = 200):
     train_accuracies, test_accuracies = [], []
     stored_loss = []
+    final_epoch = epochs
 
     for epoch in range(epochs):
         for X, y in train_dataloader:

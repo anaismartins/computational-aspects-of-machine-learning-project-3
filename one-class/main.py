@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 # define outlier detection model
 model = OneClassSVM(gamma='scale', nu=0.01)
 
-data = np.load("../datasets/dataset_all_h1.npy") # uncomment this line to use the bootstrap dataset
+data = np.load("../datasets/dataset_all_h1_bootstrap.npy") # uncomment this line to use the bootstrap dataset
 #data = np.load("../datasets/dataset_all_h1.npy") # uncomment this line to use the original dataset
 X = data[:,:-1]
 y = data[:,-1]

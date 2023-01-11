@@ -64,11 +64,11 @@ print(model)
 
 
 # LOSS AND OPTIMIZER -------------------------------------------------
-init_lr = 1e-3
+lr = 1e-3
 
 # optimzer
 o = "Adam"
-optimizer = torch.optim.Adam(model.parameters(), lr=init_lr)
+optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
 # getting ratio between data sizes
 i = 0

@@ -34,7 +34,7 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
     if m == "Perceptron":
         # bool for checking if we already have this model
         exists = False
-        filename = "Acc_" + detector + "_Perceptron_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + num_batches + "batches.png"
+        filename = "Acc_" + detector + "_Perceptron_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
 
         # check if there is a perceptron already and delete it
         for file in dir_list:
@@ -53,7 +53,7 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
     elif m == "VariableNet":
         # bool for checking if we already have this model
         exists = False
-        filename = "Acc_" + detector + "_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochss_" + num_batches + "batches.png"
+        filename = "Acc_" + detector + "_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
 
         # check if there is a variable net with the same specifications already and delete it
         for file in dir_list:
@@ -72,7 +72,7 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
     elif m == "OneLayer":
         # bool for checking if we already have this model
         exists = False
-        filename = "Acc_" + detector + "_OneLayer" + str(n_units) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochss_" + num_batches + "batches.png"
+        filename = "Acc_" + detector + "_OneLayer" + str(n_units) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
 
         # check if there is a one layer net with the same specifications already and delete it
         for file in dir_list:
