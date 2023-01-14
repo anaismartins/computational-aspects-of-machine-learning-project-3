@@ -1,6 +1,6 @@
 from torch import nn
 
-class OneLayer(nn.Module):
+class TwoLayers(nn.Module):
     """
     model with one hidden layer
     """

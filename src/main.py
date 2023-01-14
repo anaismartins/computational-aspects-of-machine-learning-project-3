@@ -18,9 +18,12 @@ import globals as g
 from Perceptron import Perceptron
 from VariableNet import VariableNet
 from OneLayer import OneLayer
+from TwoLayers import TwoLayers
 
-from model_training import train_model
-from results_plotting import plot_results
+from train_model import train_model
+from plot_results import plot_results
+from cfm import cfm
+from save_model import save_model
 
 # DEFINE DETECTOR ----------------------------------------------------
 detector = "H1"
@@ -60,8 +63,10 @@ n_units = 450 # generally 10 to 512
 n_layers = 10
 a = "ReLU"
 
-model = OneLayer(num_classes, n_units, a)
-m = "OneLayer"
+n_units2 = 512
+
+model = TwoLayers(num_classes, n_units, n_units2, a)
+m = "TwoLayers"
 print(model)
 
 
@@ -100,9 +105,9 @@ lr_decay_patience = 50 # number of epochs with no improvement after which learni
 lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = lr_decay_factor, patience = lr_decay_patience)
 
 
-# TRAINING, TESTING AND PLOTTING ------------------------------------
+# TRAINING AND TESTING------------------------------------
 max_epochs = 200000
-train_accuracies, valid_accuracies, final_epoch = train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = max_epochs)
+model, train_accuracies, valid_accuracies, final_epoch = train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = max_epochs)
 
 
 # FINAL ACCURACY ----------------------------------------------------
@@ -112,6 +117,12 @@ pred_labels = torch.argmax(model(X), axis = 1)
 test_accuracy = 100 * torch.mean((pred_labels == y).float()).item()
 print("Test accuracy: " + str(test_accuracy))
 
-plot_results(train_accuracies, valid_accuracies, test_accuracy, m, a, l, o, lr, final_epoch, n_units, n_layers, detector = detector, num_batches = num_batches)
 
+# CONFUISON MATRIX --------------------------------------------------
+cfm(y, pred_labels, m, detector, n_units, n_units2, n_layers, a, l, o, lr, epochs = max_epochs, num_batches = num_batches, test_accuracy = test_accuracy)
 
+# PLOT RESULTS ------------------------------------------------------
+plot_results(train_accuracies, valid_accuracies, test_accuracy, m, a, l, o, lr, final_epoch, n_units, n_units2, n_layers, detector = detector, num_batches = num_batches)
+
+# SAVE MODEL --------------------------------------------------------
+save_model(model, m, detector, n_units, n_units2, n_layers, a, l, o, lr, max_epochs, num_batches, test_accuracy)

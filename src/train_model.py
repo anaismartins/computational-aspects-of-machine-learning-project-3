@@ -1,10 +1,5 @@
 import torch
 from torch import nn
-from sklearn.metrics import confusion_matrix
-import seaborn as sn
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 
 def train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = 200):
     train_accuracies, valid_accuracies = [], []
@@ -32,20 +27,13 @@ def train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, l
         valid_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
         print(f"Epoch {epoch+1} | Validation accuracy: {valid_accuracies[-1]:.2f}%")
 
-        if (epoch > 50):
+        if (epoch > 200):
             stop = 0
             for i in range(0, 50):
                 if abs(valid_accuracies[-i] - valid_accuracies[epoch]) < 1:
                     stop = stop + 1
             if (stop > 25):
                 final_epoch = epoch
-
-                classes = ("Injection", "Blip", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering")
-                cf_matrix = confusion_matrix(y, pred_labels, normalize = 'true')
-                df_cm = pd.DataFrame(cf_matrix/np.sum(cf_matrix) *10, index = [i for i in classes], columns = [i for i in classes])
-                plt.figure(figsize = (12,7))
-                sn.heatmap(df_cm, annot=True)
-                plt.savefig('output.png')
 
                 break
 
@@ -56,4 +44,4 @@ def train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, l
         if old_lr != new_lr:
             print(f"Learning rate updated from {old_lr:.6f} to {new_lr:.6f}")
 
-    return train_accuracies, valid_accuracies, final_epoch
+    return model, train_accuracies, valid_accuracies, final_epoch
