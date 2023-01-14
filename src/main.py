@@ -41,20 +41,22 @@ X = torch.tensor(X, dtype=torch.float)
 y = torch.tensor(y, dtype=torch.long)
 
 # splitting the data into train and test
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=42)
+X_train, X_rem, y_train, y_rem = train_test_split(X, y, train_size=0.8)
+X_valid, X_test, y_valid, y_test = train_test_split(X_rem, y_rem, train_size=0.5)
 
 train_data = TensorDataset(X_train, y_train)
+valid_data = TensorDataset(X_valid, y_valid)
 test_data = TensorDataset(X_test, y_test)
 #setting batch size to have 20 batches per epoch
 num_batches = 10
 batch_size = round(len(train_data.tensors[0])/num_batches)
 
 train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size) 
+valid_dataloader = DataLoader(valid_data, batch_size=len(valid_data.tensors[0])) # loading the whole test data at once
 test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
 
-
 # MODEL SPECS -------------------------------------------------------
-n_units = 512 # generally 10 to 512
+n_units = 450 # generally 10 to 512
 n_layers = 10
 a = "ReLU"
 
@@ -100,6 +102,16 @@ lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = 
 
 # TRAINING, TESTING AND PLOTTING ------------------------------------
 max_epochs = 200000
-train_accuracies, test_accuracies, final_epoch = train_model(train_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = max_epochs)
+train_accuracies, valid_accuracies, final_epoch = train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = max_epochs)
 
-plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, final_epoch, n_units, n_layers, detector = detector, num_batches = num_batches)
+
+# FINAL ACCURACY ----------------------------------------------------
+X, y = next(iter(test_dataloader))
+pred_labels = torch.argmax(model(X), axis = 1)
+
+test_accuracy = 100 * torch.mean((pred_labels == y).float()).item()
+print("Test accuracy: " + str(test_accuracy))
+
+plot_results(train_accuracies, valid_accuracies, test_accuracy, m, a, l, o, lr, final_epoch, n_units, n_layers, detector = detector, num_batches = num_batches)
+
+

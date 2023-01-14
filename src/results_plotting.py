@@ -5,7 +5,7 @@ import os
 # my modules
 import globals as g
 
-def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_units = 0, n_layers = 0, detector = "H1", num_batches = 20):
+def plot_results(train_accuracies, valid_accuracies, test_accuracy, m, a, l, o, lr, epochs, n_units = 0, n_layers = 0, detector = "H1", num_batches = 20):
     fig = plt.figure(tight_layout=True)
     gs = gridspec.GridSpec(nrows=2, ncols=1)
 
@@ -23,9 +23,9 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
     ax.set_ylabel("Training Accuracy")
 
     ax = fig.add_subplot(gs[1, 0])
-    ax.plot(test_accuracies)
+    ax.plot(valid_accuracies)
     ax.set_xlabel("Epoch")
-    ax.set_ylabel("Test Accuracy")
+    ax.set_ylabel("Validation Accuracy")
 
     fig.align_labels()
 
@@ -41,12 +41,12 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
             if filename in file:
                 exists = True
 
-            if filename in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
+            if filename in file and float(file.split("Acc")[0]) < round(test_accuracy, 2):
                 os.remove("../results/" + file)
-                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + filename)
+                plt.savefig("../results/" + str(round(test_accuracy, 2)) + filename)
 
         if not exists:
-            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + filename)
+            plt.savefig("../results/" + str(round(test_accuracy, 2)) + filename)
 
         print("Perceptron results saved to results folder. (If it already existed, it was overwritten.)")
 
@@ -60,12 +60,12 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
             if filename in file:
                 exists = True
 
-            if filename in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
+            if filename in file and float(file.split("Acc")[0]) < round(test_accuracy, 2):
                 os.remove("../results/" + file)
-                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + filename)
+                plt.savefig("../results/" + str(round(test_accuracy, 2)) + filename)
     
         if not exists: 
-            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + filename)
+            plt.savefig("../results/" + str(round(test_accuracy, 2)) + filename)
 
         print("VariableNet results saved to results folder. (If it already existed, it was overwritten.)")
 
@@ -79,11 +79,11 @@ def plot_results(train_accuracies, test_accuracies, m, a, l, o, lr, epochs, n_un
             if filename in file:
                 exists = True
 
-            if filename in file and float(file.split("Acc")[0]) < round(test_accuracies[-1], 2):
+            if filename in file and float(file.split("Acc")[0]) < round(test_accuracy, 2):
                 os.remove("../results/" + file)
-                plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + filename)
+                plt.savefig("../results/" + str(round(test_accuracy, 2)) + filename)
 
         if not exists:
-            plt.savefig("../results/" + str(round(test_accuracies[-1], 2)) + filename)
+            plt.savefig("../results/" + str(round(test_accuracy, 2)) + filename)
 
         print("OneLayer results saved to results folder. (If it already existed, it was overwritten.)")
