@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-def cfm(y, pred_labels, m, detector, n_units, n_units2, n_layers, a, l, o, lr, epochs, num_batches, test_accuracy):
+def cfm(y, pred_labels, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, epochs, num_batches, test_accuracy):
 
     classes = ("Injection", "Blip", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering")
     cf_matrix = confusion_matrix(y, pred_labels)
@@ -19,15 +19,14 @@ def cfm(y, pred_labels, m, detector, n_units, n_units2, n_layers, a, l, o, lr, e
 
     if m == "Perceptron":
         filename = "Acc_" + detector + "_Perceptron_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
-
     elif m == "VariableNet":
         filename = "Acc_" + detector + "_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
-
     elif m == "OneLayer":
         filename = "Acc_" + detector + "_OneLayer" + str(n_units) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
-    
     elif m == "TwoLayers":
         filename = "Acc_" + detector + "_TwoLayers" + str(n_units) + "_" + str(n_units2) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
+    elif m == "ThreeLayers":
+        filename = "Acc_" + detector + "_ThreeLayers" + str(n_units) + "_" + str(n_units2) + "_" + str(n_units3) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
 
 
     for file in dir_list:

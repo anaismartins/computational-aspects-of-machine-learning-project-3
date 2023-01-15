@@ -19,6 +19,7 @@ from Perceptron import Perceptron
 from VariableNet import VariableNet
 from OneLayer import OneLayer
 from TwoLayers import TwoLayers
+from ThreeLayers import ThreeLayers
 
 from train_model import train_model
 from plot_results import plot_results
@@ -63,10 +64,11 @@ n_units = 450 # generally 10 to 512
 n_layers = 10
 a = "ReLU"
 
-n_units2 = 512
+n_units2 = 10
+n_units3 = 512
 
-model = TwoLayers(num_classes, n_units, n_units2, a)
-m = "TwoLayers"
+model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
+m = "ThreeLayers"
 print(model)
 
 
@@ -89,6 +91,7 @@ with open("../dataprep/datasize.txt", 'r') as f:
 
 size_ratio = biggest/injection_size
 #size_ratio = 1 #uncomment if data is all the same size
+print(size_ratio)
 
 # setting weights for loss function
 l = "CrossEntropyLoss"
@@ -119,10 +122,10 @@ print("Test accuracy: " + str(test_accuracy))
 
 
 # CONFUISON MATRIX --------------------------------------------------
-cfm(y, pred_labels, m, detector, n_units, n_units2, n_layers, a, l, o, lr, epochs = max_epochs, num_batches = num_batches, test_accuracy = test_accuracy)
+cfm(y, pred_labels, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, epochs = max_epochs, num_batches = num_batches, test_accuracy = test_accuracy)
 
 # PLOT RESULTS ------------------------------------------------------
-plot_results(train_accuracies, valid_accuracies, test_accuracy, m, a, l, o, lr, final_epoch, n_units, n_units2, n_layers, detector = detector, num_batches = num_batches)
+plot_results(train_accuracies, valid_accuracies, test_accuracy, m, a, l, o, lr, final_epoch, n_units, n_units2, n_units3, n_layers, detector = detector, num_batches = num_batches)
 
 # SAVE MODEL --------------------------------------------------------
-save_model(model, m, detector, n_units, n_units2, n_layers, a, l, o, lr, max_epochs, num_batches, test_accuracy)
+save_model(model, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, max_epochs, num_batches, test_accuracy)

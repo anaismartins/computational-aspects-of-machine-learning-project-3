@@ -5,7 +5,7 @@ import os
 # my modules
 import globals as g
 
-def plot_results(train_accuracies, valid_accuracies, test_accuracy, m, a, l, o, lr, epochs, n_units = 0, n_units2 = 0, n_layers = 0, detector = "H1", num_batches = 20):
+def plot_results(train_accuracies, valid_accuracies, test_accuracy, m, a, l, o, lr, epochs, n_units = 0, n_units2 = 0, n_units3 = 0, n_layers = 0, detector = "H1", num_batches = 20):
     fig = plt.figure(tight_layout=True)
     gs = gridspec.GridSpec(nrows=2, ncols=1)
 
@@ -35,15 +35,14 @@ def plot_results(train_accuracies, valid_accuracies, test_accuracy, m, a, l, o, 
 
     if m == "Perceptron":
         filename = "Acc_" + detector + "_Perceptron_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
-
     elif m == "VariableNet":
         filename = "Acc_" + detector + "_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
-
     elif m == "OneLayer":
         filename = "Acc_" + detector + "_OneLayer" + str(n_units) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
-
     elif m == "TwoLayers":
         filename = "Acc_" + detector + "_TwoLayers" + str(n_units) + "_" + str(n_units2) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
+    elif m == "ThreeLayers":
+        filename = "Acc_" + detector + "_ThreeLayers" + str(n_units) + "_" + str(n_units2) + "_" + str(n_units3) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.png"
 
 
     for file in dir_list:
