@@ -69,8 +69,6 @@ n_units3 = 512
 
 model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
 m = "ThreeLayers"
-print(model)
-
 
 # LOSS AND OPTIMIZER -------------------------------------------------
 lr = 1e-3
@@ -90,7 +88,7 @@ with open("../dataprep/datasize.txt", 'r') as f:
             injection_size = int(line)
 
 size_ratio = biggest/injection_size
-#size_ratio = 1 #uncomment if data is all the same size
+size_ratio = 1 #uncomment if data is all the same size
 print(size_ratio)
 
 # setting weights for loss function
