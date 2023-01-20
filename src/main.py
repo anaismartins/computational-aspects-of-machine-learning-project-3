@@ -6,6 +6,7 @@ import matplotlib.gridspec as gridspec
 
 # sklearn
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
 
 # torch
 import torch
@@ -44,86 +45,94 @@ y = data[:,-1]
 X = torch.tensor(X, dtype=torch.float)
 y = torch.tensor(y, dtype=torch.long)
 
-# splitting the data into train and test
-X_train, X_rem, y_train, y_rem = train_test_split(X, y, train_size=0.8)
-X_valid, X_test, y_valid, y_test = train_test_split(X_rem, y_rem, train_size=0.5)
+kfold = KFold(n_splits=10, shuffle=False)
 
-train_data = TensorDataset(X_train, y_train)
-valid_data = TensorDataset(X_valid, y_valid)
-test_data = TensorDataset(X_test, y_test)
-#setting batch size to have 20 batches per epoch
-num_batches = 10
-batch_size = round(len(train_data.tensors[0])/num_batches)
+all_training_accuracies = []
+all_valid_accuracies = []
+all_pred_labels = []
 
-train_dataloader = DataLoader(train_data, shuffle=True, batch_size=batch_size) 
-valid_dataloader = DataLoader(valid_data, batch_size=len(valid_data.tensors[0])) # loading the whole test data at once
-test_dataloader = DataLoader(test_data, batch_size=len(test_data.tensors[0])) # loading the whole test data at once
+fold = 1
 
-# MODEL SPECS -------------------------------------------------------
-n_units = 450 # generally 10 to 512
-n_layers = 10
-a = "ReLU"
+for train_index, valid_index in kfold.split(X, y):  
+    X_train_fold = X[train_index] 
+    y_train_fold = y[train_index] 
+    X_valid_fold = X[valid_index] 
+    y_valid_fold = y[valid_index] 
 
-n_units2 = 10
-n_units3 = 512
+    train_fold_data = TensorDataset(X_train_fold, y_train_fold)
+    valid_fold_data = TensorDataset(X_valid_fold, y_valid_fold)
 
-model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
-m = "ThreeLayers"
+    #setting batch size to have num_batches batches per epoch
+    num_batches = 10
+    batch_size = round(len(train_fold_data.tensors[0])/num_batches)
 
-# LOSS AND OPTIMIZER -------------------------------------------------
-lr = 1e-3
+    train_dataloader = DataLoader(train_fold_data, shuffle=True, batch_size=batch_size) 
+    valid_dataloader = DataLoader(valid_fold_data, batch_size=len(valid_fold_data.tensors[0])) # loading the whole test data at once
 
-# optimzer
-o = "Adam"
-optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    # MODEL SPECS -------------------------------------------------------
+    max_epochs = 200
+    n_units = 512 # generally 10 to 512
+    n_layers = 10
+    a = "ReLU"
 
-# getting ratio between data sizes
-i = 0
-with open("../dataprep/datasize.txt", 'r') as f:
-    for line in f:
-        if i == 0:
-            biggest = int(line)
-            i += 1
-        if i == 1:
-            injection_size = int(line)
+    n_units2 = 10
+    n_units3 = 512
 
-size_ratio = biggest/injection_size
-size_ratio = 1 #uncomment if data is all the same size
-print(size_ratio)
-
-# setting weights for loss function
-l = "CrossEntropyLoss"
-if detector != "V1":
-    class_weights = torch.FloatTensor([size_ratio, 1, 1, 1, 1, 1, 1]) #[injection, blips, fast scattering, koyfish, lowfreq, tomte, whistle]
-else:
-    class_weights = torch.FloatTensor([size_ratio, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle]
-loss_fn = nn.CrossEntropyLoss(weight=class_weights)
-
-# smart learning rate
-lr_decay_factor = 0.9 # factor by which the learning rate will be multiplied
-lr_decay_patience = 50 # number of epochs with no improvement after which learning rate will be reduced
-
-lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = lr_decay_factor, patience = lr_decay_patience)
+    model = OneLayer(num_classes, n_units, a)
+    m = "OneLayer"
 
 
-# TRAINING AND TESTING------------------------------------
-max_epochs = 200000
-model, train_accuracies, valid_accuracies, final_epoch = train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = max_epochs)
+    # LOSS AND OPTIMIZER -------------------------------------------------
+    lr = 1e-3
 
+    # optimzer
+    o = "Adam"
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+
+    # setting weights for loss function
+    l = "CrossEntropyLoss"
+    if detector != "V1":
+        class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1]) #[injection, blips, fast scattering, koyfish, lowfreq, tomte, whistle]
+    else:
+        class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle]
+    loss_fn = nn.CrossEntropyLoss(weight=class_weights)
+
+    # smart learning rate
+    lr_decay_factor = 0.9 # factor by which the learning rate will be multiplied
+    lr_decay_patience = 50 # number of epochs with no improvement after which learning rate will be reduced
+
+    lr_sch = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = lr_decay_factor, patience = lr_decay_patience)
+
+
+    print("\n\n\nFold " + str(fold) + " of 10")
+    fold += 1
+
+
+    # TRAINING AND TESTING------------------------------------
+    pred_labels, train_accuracies, valid_accuracies, final_epoch = train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, lr_sch, epochs = max_epochs)
+    all_pred_labels.append(pred_labels)
+    all_training_accuracies.append(train_accuracies)
+    all_valid_accuracies.append(valid_accuracies)
 
 # FINAL ACCURACY ----------------------------------------------------
-X, y = next(iter(test_dataloader))
-pred_labels = torch.argmax(model(X), axis = 1)
+# averaged validation accuracies
+av_validation_accuracy = 0
+for i in range(0, 10):
+    av_validation_accuracy += all_valid_accuracies[i][-1]
+av_validation_accuracy = av_validation_accuracy/10
+print("Average validation accuracy: " + str(av_validation_accuracy))
 
-test_accuracy = 100 * torch.mean((pred_labels == y).float()).item()
-print("Test accuracy: " + str(test_accuracy))
-
+# averaging the labels - NEED TO FIGURE OUT HOW TO DO THIS
+#for train_index, valid_index in kfold.split(X, y):
+# ordered_pred_labels[i][valid_index] = all_pred_labels[i]
+    
 
 # CONFUISON MATRIX --------------------------------------------------
-cfm(y, pred_labels, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, epochs = max_epochs, num_batches = num_batches, test_accuracy = test_accuracy)
+#cfm(y, pred_labels, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, epochs = final_epoch, num_batches = num_batches, test_accuracy = av_validation_accuracy)
 
 # PLOT RESULTS ------------------------------------------------------
-plot_results(train_accuracies, valid_accuracies, test_accuracy, m, a, l, o, lr, final_epoch, n_units, n_units2, n_units3, n_layers, detector = detector, num_batches = num_batches)
+plot_results(all_training_accuracies, all_valid_accuracies, av_validation_accuracy, m, a, l, o, lr, final_epoch, n_units, n_units2, n_units3, n_layers, detector = detector, num_batches = num_batches)
 
 # SAVE MODEL --------------------------------------------------------
-save_model(model, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, max_epochs, num_batches, test_accuracy)
+# this is saving the model from the last fold but i dont think melissa really cares abt the model being saved
+save_model(model, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, final_epoch, num_batches, av_validation_accuracy)

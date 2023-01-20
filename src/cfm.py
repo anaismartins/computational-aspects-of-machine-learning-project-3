@@ -1,5 +1,5 @@
 from sklearn.metrics import confusion_matrix
-import seaborn as sn
+import seaborn as sns
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,11 +7,13 @@ import os
 
 def cfm(y, pred_labels, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, epochs, num_batches, test_accuracy):
 
-    classes = ("Injection", "Blip", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering")
-    cf_matrix = confusion_matrix(y, pred_labels)
-    df_cm = pd.DataFrame(cf_matrix/np.sum(cf_matrix) *10, index = [i for i in classes], columns = [i for i in classes])
-    plt.figure(figsize = (12,7))
-    sn.heatmap(df_cm, annot=True)
+    #classes = ("Injection", "Blip", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering")
+    #cf_matrix = confusion_matrix(y, pred_labels)
+    #df_cm = pd.DataFrame(cf_matrix/np.sum(cf_matrix) *10, index = [i for i in classes], columns = [i for i in classes])
+    #plt.figure(figsize = (12,7))
+    #sn.heatmap(df_cm, annot=True)
+
+    sns.heatmap(confusion_matrix(y, pred_labels), annot=True, fmt="d")
 
     dir_list = os.listdir("../output/cfms/")
 

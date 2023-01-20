@@ -29,10 +29,10 @@ def train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, l
 
         if (epoch > 200):
             stop = 0
-            for i in range(0, 50):
+            for i in range(0, 200):
                 if abs(valid_accuracies[-i] - valid_accuracies[epoch]) < 1:
                     stop = stop + 1
-            if (stop > 25):
+            if (stop > 150):
                 final_epoch = epoch
 
                 break
@@ -44,4 +44,4 @@ def train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, l
         if old_lr != new_lr:
             print(f"Learning rate updated from {old_lr:.6f} to {new_lr:.6f}")
 
-    return model, train_accuracies, valid_accuracies, final_epoch
+    return pred_labels, train_accuracies, valid_accuracies, final_epoch
