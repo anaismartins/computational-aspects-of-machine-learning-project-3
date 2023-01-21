@@ -26,6 +26,7 @@ from train_model import train_model
 from plot_results import plot_results
 from cfm import cfm
 from save_model import save_model
+from filename import filename
 
 # DEFINE DETECTOR ----------------------------------------------------
 detector = "H1"
@@ -45,11 +46,13 @@ y = data[:,-1]
 X = torch.tensor(X, dtype=torch.float)
 y = torch.tensor(y, dtype=torch.long)
 
-kfold = KFold(n_splits=10, shuffle=False)
+k = 10
+kfold = KFold(n_splits=k, shuffle=False)
 
 all_training_accuracies = []
 all_valid_accuracies = []
 all_pred_labels = []
+all_final_epochs = []
 
 fold = 1
 
@@ -70,7 +73,7 @@ for train_index, valid_index in kfold.split(X, y):
     valid_dataloader = DataLoader(valid_fold_data, batch_size=len(valid_fold_data.tensors[0])) # loading the whole test data at once
 
     # MODEL SPECS -------------------------------------------------------
-    max_epochs = 200
+    max_epochs = 200000
     n_units = 512 # generally 10 to 512
     n_layers = 10
     a = "ReLU"
@@ -104,7 +107,7 @@ for train_index, valid_index in kfold.split(X, y):
     lr_sch = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = lr_decay_factor, patience = lr_decay_patience)
 
 
-    print("\n\n\nFold " + str(fold) + " of 10")
+    print("\n\n\nFold " + str(fold) + " of " + str(k))
     fold += 1
 
 
@@ -113,25 +116,32 @@ for train_index, valid_index in kfold.split(X, y):
     all_pred_labels.append(pred_labels)
     all_training_accuracies.append(train_accuracies)
     all_valid_accuracies.append(valid_accuracies)
+    all_final_epochs.append(final_epoch)
 
 # FINAL ACCURACY ----------------------------------------------------
 # averaged validation accuracies
 av_validation_accuracy = 0
-for i in range(0, 10):
+for i in range(0, k):
     av_validation_accuracy += all_valid_accuracies[i][-1]
-av_validation_accuracy = av_validation_accuracy/10
+av_validation_accuracy = av_validation_accuracy/k
 print("Average validation accuracy: " + str(av_validation_accuracy))
 
-# averaging the labels - NEED TO FIGURE OUT HOW TO DO THIS
-#for train_index, valid_index in kfold.split(X, y):
-# ordered_pred_labels[i][valid_index] = all_pred_labels[i]
-    
+ordered_pred_labels = [0] * len(y)
+for i in range(0, k):
+    ordered_pred_labels[len(all_pred_labels[0])*i:len(all_pred_labels[0])*(i+1)] = all_pred_labels[i]
+  
+final_epoch = 0
+for i in range(0, k):
+    final_epoch += all_final_epochs[i]
+final_epoch = round(final_epoch/k)
+
+filename = filename(m, detector, a, l, o, lr, final_epoch, num_batches, n_layers, n_units, n_units2, n_units3)
 
 # CONFUISON MATRIX --------------------------------------------------
-#cfm(y, pred_labels, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, epochs = final_epoch, num_batches = num_batches, test_accuracy = av_validation_accuracy)
+cfm(y, ordered_pred_labels, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, epochs = final_epoch, num_batches = num_batches, test_accuracy = av_validation_accuracy)
 
 # PLOT RESULTS ------------------------------------------------------
-plot_results(all_training_accuracies, all_valid_accuracies, av_validation_accuracy, m, a, l, o, lr, final_epoch, n_units, n_units2, n_units3, n_layers, detector = detector, num_batches = num_batches)
+plot_results(all_training_accuracies, all_valid_accuracies, av_validation_accuracy, k, m, a, l, o, lr, final_epoch, n_units, n_units2, n_units3, n_layers, detector = detector, num_batches = num_batches)
 
 # SAVE MODEL --------------------------------------------------------
 # this is saving the model from the last fold but i dont think melissa really cares abt the model being saved

@@ -30,7 +30,7 @@ def train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, l
         if (epoch > 200):
             stop = 0
             for i in range(0, 200):
-                if abs(valid_accuracies[-i] - valid_accuracies[epoch]) < 1:
+                if abs(valid_accuracies[-i] - valid_accuracies[epoch]) < 0.1:
                     stop = stop + 1
             if (stop > 150):
                 final_epoch = epoch
