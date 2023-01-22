@@ -1,59 +1,54 @@
 import random
 import numpy as np
 
+# Set the detector to use
 detector = "H1"
 
-injections = np.load("../datasets/injection_triggers_" + detector + ".npy")
-blips = np.load("../datasets/blip_triggers_" + detector + ".npy")
+# Load the data
+injections = np.load("../datasets/injection_triggers_" + detector + ".npy").tolist()
+blips = np.load("../datasets/blip_triggers_" + detector + ".npy").tolist()
+koyfishes = np.load("../datasets/koyfish_triggers_" + detector + ".npy").tolist()
+lowfreqs = np.load("../datasets/lowfreq_triggers_" + detector + ".npy").tolist()
+tomtes = np.load("../datasets/tomte_triggers_" + detector + ".npy").tolist()
+whistles = np.load("../datasets/whistle_triggers_" + detector + ".npy").tolist()
 if detector != "V1":
-    fast_scatterings = np.load("../datasets/fast_scattering_triggers_" + detector + ".npy")
-koyfishes = np.load("../datasets/koyfish_triggers_" + detector + ".npy")
-lowfreqs = np.load("../datasets/lowfreq_triggers_" + detector + ".npy")
-tomtes = np.load("../datasets/tomte_triggers_" + detector + ".npy")
-whistles = np.load("../datasets/whistle_triggers_" + detector + ".npy")
+    fast_scatterings = np.load("../datasets/fast_scattering_triggers_" + detector + ".npy").tolist()
 
+# Find the biggest dataset
 if detector != "V1":
     biggest = max(len(blips), len(fast_scatterings), len(koyfishes), len(lowfreqs), len(tomtes), len(whistles))
 else:
     biggest = max(len(blips), len(koyfishes), len(lowfreqs), len(tomtes), len(whistles))
 
-with open("datasize.txt", "w") as f:
-    f.write(str(round(biggest/100)*100) + "\n" + str(len(injections)))
-
 def bootstrap(glitch):
-    glitch_boot = [[]]
-    col = []
-    nums = np.array([])
+    """
+    Bootstraps the data to make it the same size as the biggest dataset
+    """
+    n_rows = round(biggest/100)*100
 
-    for n in range(0, 7):
-        for i in range(0, 100):
-            for j in range (0, glitch.shape[0]):
-                col.append(glitch[j][n])
-            nums = np.append(nums, random.sample(col, round(biggest/100)))
+    rows = [[]]
+    aux = []
 
-        if n == 0:
-            glitch_boot[0] = nums
-        else:
-            glitch_boot.append(nums)
+    for i in range(n_rows):
+        for j in range(7):
+            aux.append(0)
+        rows.append(aux)
+        aux = []
 
-        nums = np.array([]) 
-        col = []
+    for it in range(0, 100):
+        rows[round(biggest/100)*it:round(biggest/100)*(it + 1)] = random.sample(glitch, round(biggest/100))
 
-    result = [[glitch_boot[j][i] for j in range(len(glitch_boot))] for i in range(len(glitch_boot[0]))]
+    rows.pop(-1)
 
-    for i in range(len(glitch_boot)):
-        for j in range(len(glitch_boot[0])):
-            result[j][i] = glitch_boot[i][j]
-
-    return result
+    return rows
 
 blip_boot = bootstrap(blips)
-if detector != "V1":
-    fast_scattering_boot = bootstrap(fast_scatterings)
 koyfish_boot = bootstrap(koyfishes)
 lowfreq_boot = bootstrap(lowfreqs)
 tomte_boot = bootstrap(tomtes)
 whistle_boot = bootstrap(whistles)
+if detector != "V1":
+    fast_scattering_boot = bootstrap(fast_scatterings)
 
 #injection_boot = injections
 injection_boot = injections[0:round(biggest/100)*100]
@@ -66,7 +61,9 @@ dataset = np.append(dataset, lowfreq_boot, axis = 0)
 dataset = np.append(dataset, tomte_boot, axis = 0)
 dataset = np.append(dataset, whistle_boot, axis = 0)
 
-np.random.shuffle(dataset)
 
+
+np.random.shuffle(dataset)
+print("Dataset size: " + str(dataset.shape))
 np.save('../datasets/dataset_all_' + detector + '_bootstrap.npy', dataset)
 print("Saved.")

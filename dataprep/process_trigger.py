@@ -10,9 +10,9 @@ lowfreq_files = []
 tomte_files = []
 whistle_files = []
 
-#folder_path = '/home/jonno/ML_Course/ML_data/'
 folder_path = "../../../lopezm/ML_projects/Projects_2022/Project_3/Data/dataframes/" 
 
+# Set the detector to use
 detector = "H1"
 
 # Iterate over all files in the given folder
@@ -21,9 +21,7 @@ for filename in os.listdir(folder_path):
     if filename.endswith(".csv"):
         #Check what type of data the file contains and put in in the corresponding list.
         if filename.startswith("Blip_" + detector):
-            blip_files.append((os.path.join(folder_path, filename)))
-        elif filename.startswith("Fast_Scattering_" + detector) and (detector != "V1"):
-            fast_scattering_files.append((os.path.join(folder_path, filename)))                      
+            blip_files.append((os.path.join(folder_path, filename)))                     
         elif filename.startswith("Injections_" + detector):
             injection_files.append((os.path.join(folder_path, filename)))       
         elif filename.startswith("KoyFish_" + detector):
@@ -33,7 +31,9 @@ for filename in os.listdir(folder_path):
         elif filename.startswith("Tomte_" + detector):
             tomte_files.append((os.path.join(folder_path, filename)))
         elif filename.startswith("Whistle_" + detector):
-            whistle_files.append((os.path.join(folder_path, filename)))    
+            whistle_files.append((os.path.join(folder_path, filename))) 
+        elif filename.startswith("Fast_Scattering_" + detector) and (detector != "V1"):
+            fast_scattering_files.append((os.path.join(folder_path, filename)))    
 
 #Now this function must be edited so that it reads the csv files from e.g. the koyfish_files array
 def read_triggers(read_paths, trigger_id, weighted_average = False):
@@ -138,12 +138,12 @@ if detector != 'V1':
 
 np.save('../datasets/injection_triggers_' + detector + '.npy', injection_triggers)
 np.save('../datasets/blip_triggers_' + detector + '.npy', blip_triggers)
-if detector != 'V1':
-    np.save('../datasets/fast_scattering_triggers_' + detector + '.npy', fast_scattering_triggers)
 np.save('../datasets/koyfish_triggers_' + detector + '.npy', koyfish_triggers)
 np.save('../datasets/lowfreq_triggers_' + detector + '.npy', lowfreq_triggers)
 np.save('../datasets/tomte_triggers_' + detector + '.npy', tomte_triggers)
 np.save('../datasets/whistle_triggers_' + detector + '.npy', whistle_triggers)
+if detector != 'V1':
+    np.save('../datasets/fast_scattering_triggers_' + detector + '.npy', fast_scattering_triggers)
 
 if detector != 'V1':
     injection_triggers = injection_triggers[0:fast_scattering_triggers.shape[0]]

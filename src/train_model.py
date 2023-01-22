@@ -44,4 +44,4 @@ def train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, l
         if old_lr != new_lr:
             print(f"Learning rate updated from {old_lr:.6f} to {new_lr:.6f}")
 
-    return pred_labels, train_accuracies, valid_accuracies, final_epoch
+    return pred_labels, train_accuracies, valid_accuracies, final_epoch, model

@@ -1,24 +1,13 @@
 import torch
 import os
 
-def save_model(model, m, detector, n_units, n_units2, n_units3, n_layers, a, l, o, lr, epochs, num_batches, test_accuracy):    
+def save_model(model, test_accuracy, filename):    
 
     dir_list = os.listdir("../output/models/")
     
     # bool for checking if we already have this model
     exists = False
-
-    if m == "Perceptron":
-        filename = "Acc_" + detector + "_Perceptron_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.pth"
-    elif m == "VariableNet":
-        filename = "Acc_" + detector + "_VariableNet" + str(n_units) + "Units" + str(n_layers) + "Layers_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.pth"
-    elif m == "OneLayer":
-        filename = "Acc_" + detector + "_OneLayer" + str(n_units) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.pth"
-    elif m == "TwoLayers":
-        filename = "Acc_" + detector + "_TwoLayers" + str(n_units) + "_" + str(n_units2) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.pth"
-    elif m == "ThreeLayers":
-        filename = "Acc_" + detector + "_ThreeLayers" + str(n_units) + "_" + str(n_units2) + "_" + str(n_units3) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches.pth"
-
+    filename = filename + ".pth"
 
         # check if there is this model already and delete it
     for file in dir_list:

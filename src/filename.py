@@ -1,4 +1,5 @@
 def filename(m, detector, a, l, o, lr, epochs, num_batches, n_layers, n_units, n_units2, n_units3):
+    
     if m == "Perceptron":
         filename = "Acc_" + detector + "_Perceptron_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches"
     elif m == "VariableNet":
