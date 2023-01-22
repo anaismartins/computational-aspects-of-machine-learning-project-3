@@ -1,12 +1,19 @@
 import torch
 import os
 
-def save_model(model, test_accuracy, filename):    
+def save_model(model, test_accuracy, filename):
+    """
+    function that saves the model in the output folder
+    :param model: the model (string of the model name)
+    :param test_accuracy: the accuracy of the model
+    :param filename: name to save the model as
+    """    
 
     dir_list = os.listdir("../output/models/")
     
     # bool for checking if we already have this model
     exists = False
+    # adding the file extension to the filname
     filename = filename + ".pth"
 
         # check if there is this model already and delete it

@@ -27,7 +27,8 @@ from cfm import cfm
 from save_model import save_model
 from filename import filename
 
-# DEFINE DETECTOR ----------------------------------------------------
+
+# DEFINE DETECTOR ----------------------------------------------------------------------------------------
 detector = "H1"
 
 if detector != "V1":
@@ -36,9 +37,8 @@ else:
     num_classes = 6
 
 
-# LOAD DATA AND SPLIT INTO TRAIN AND TEST -----------------------------
-data = np.load("../datasets/dataset_all_" + detector + "_bootstrap.npy") # uncomment this line to use the bootstrap dataset
-#data = np.load("../datasets/dataset_all_h1.npy") # uncomment this line to use the original dataset
+# LOAD DATA AND SPLIT INTO TRAIN AND TEST -----------------------------------------------------------------
+data = np.load("../datasets/dataset_all_" + detector + "_bootstrap.npy")
 
 # dividing the data into X and y
 X = data[:,:-1]
@@ -82,21 +82,24 @@ for train_index, valid_index in kfold.split(X, y):
     valid_dataloader = DataLoader(valid_fold_data, batch_size=len(valid_fold_data.tensors[0])) 
     
     
-    # MODEL SPECS -------------------------------------------------------
+    # MODEL SPECS ----------------------------------------------------------------------------------------
     max_epochs = 200000
 
     a = "ReLU"
 
     n_layers = 10
-    n_units = 512 # generally 10 to 512
+    # generally 10 to 512 units
+    n_units = 261
     n_units2 = 10
     n_units3 = 512
 
-    model = OneLayer(num_classes, n_units, a)
-    m = "OneLayer"
+    # model needs to be called in the loop to reset the weights
+    model = Perceptron(num_classes)
+    m = "Perceptron"
 
 
-    # LOSS AND OPTIMIZER -------------------------------------------------
+    # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
+    # initial learning rate
     lr = 1e-3
 
     # optimzer
@@ -106,7 +109,7 @@ for train_index, valid_index in kfold.split(X, y):
     # setting weights for loss function
     l = "CrossEntropyLoss"
     if detector != "V1":
-        class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1]) #[injection, blips, fast scattering, koyfish, lowfreq, tomte, whistle]
+        class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle, fast scattering]
     else:
         class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle]
     loss_fn = nn.CrossEntropyLoss(weight=class_weights)
@@ -121,7 +124,7 @@ for train_index, valid_index in kfold.split(X, y):
     print("\n\n\nFold " + str(fold) + " of " + str(k))
     
 
-    # TRAINING AND TESTING------------------------------------
+    # TRAINING AND TESTING--------------------------------------------------------------------------------
     pred_labels, train_accuracies, valid_accuracies, final_epoch, model = train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, lr_sch, epochs = max_epochs)
     
     # saving the results
@@ -142,7 +145,7 @@ for train_index, valid_index in kfold.split(X, y):
     fold += 1
 
 
-# FINAL ACCURACY ----------------------------------------------------
+# FINAL ACCURACY ----------------------------------------------------------------------------------------
 # averaged validation accuracies
 av_validation_accuracy = 0
 for i in range(0, k):
@@ -150,7 +153,7 @@ for i in range(0, k):
 av_validation_accuracy = av_validation_accuracy/k
 print("Average validation accuracy: " + str(av_validation_accuracy))
 
-# ordered predicted labels to match the order of the original dataset and do the cfm
+# ordered predicted labels to match the order of the original dataset and do the cfm afterwards
 ordered_pred_labels = [0] * len(y)
 for i in range(0, k):
     ordered_pred_labels[len(all_pred_labels[0])*i:len(all_pred_labels[0])*(i+1)] = all_pred_labels[i]

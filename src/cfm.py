@@ -6,6 +6,15 @@ import matplotlib.pyplot as plt
 import os
 
 def cfm(y, pred_labels, filename, test_accuracy):
+    """
+    function that plots the confusion matrix and saves it in the output folder
+    
+    :param y: the true labels
+    :param pred_labels: the predicted labels
+    :param filename: the name of the model
+    :param test_accuracy: the accuracy of the model
+    :return: None
+    """
 
     # confusion matrix
     sns.heatmap(confusion_matrix(y, pred_labels), annot=True, fmt="d")

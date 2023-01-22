@@ -39,6 +39,10 @@ for filename in os.listdir(folder_path):
 def read_triggers(read_paths, trigger_id, weighted_average = False):
     """
     Function that reads the CSV trigger files, averages them and converts it to the right array format.
+    :param read_paths: The paths to the CSV files that should be read.
+    :param trigger_id: The ID of the trigger that should be read.
+    :param weighted_average: If the weighted average should be used.
+    :return: The array with the averaged trigger data.
     """
     
     all_triggers = np.array([[False]])

@@ -3,11 +3,11 @@ from torch import nn
 class OneLayer(nn.Module):
     """
     model with one hidden layer
+    :param num_classes: number of classes
+    :param n_units: number of units in the hidden layer
+    :param a: activation function
     """
     def __init__(self, num_classes, n_units, a):
-        """
-        runs when the object is created
-        """
         super().__init__()
 
         if a == "ReLU":

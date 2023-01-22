@@ -1,12 +1,19 @@
 from torch import nn
-import torch.nn.functional as F
 
 class VariableNet(nn.Module):
+    """
+    model with variable number of hidden layers and variable number of units
+
+    :param num_classes: number of classes
+    :param n_units: number of units in the hidden layer
+    :param n_layers: number of hidden layers
+    :param a: activation function
+    """
     def __init__(self, num_classes, n_units, n_layers, a):
         super().__init__()
 
         if a == "ReLU":
-            self.activation = F.relu
+            self.activation = nn.ReLU
 
         self.n_layers = n_layers
 

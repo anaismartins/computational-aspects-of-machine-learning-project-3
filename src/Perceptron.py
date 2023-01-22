@@ -3,11 +3,9 @@ from torch import nn
 class Perceptron(nn.Module):
     """
     A simple perceptron model
+    :param num_classes: number of classes
     """
     def __init__(self, num_classes):
-        """
-        runs when the object is created
-        """
         super(Perceptron, self).__init__()
 
         self.output = nn.Sequential(
