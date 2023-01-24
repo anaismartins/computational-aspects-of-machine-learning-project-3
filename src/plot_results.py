@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import os
+import shutil
 
 def plot_results(train_accuracies, valid_accuracies, test_accuracy, k, filename):
     """
@@ -48,7 +49,7 @@ def plot_results(train_accuracies, valid_accuracies, test_accuracy, k, filename)
             # if it's running for the first time, check for the existance of the folder for this same model and delete it if the new accuracy is better
             if first:
                 if filename in folder and float(folder.split("Acc")[0]) < round(test_accuracy, 2):
-                    os.remove("../output/results/" + folder)
+                    shutil.rmtree("../output/results/" + folder)
                     os.makedirs("../output/results/" + str(round(test_accuracy, 2)) + filename)
                     plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/" + str(i) + ".png")
                     first = False

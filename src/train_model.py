@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-def train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = 200):
+def train_model(train_dataloader, valid_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = 200):
     """
     Train the model and return the validation accuracy
     :param train_dataloader: training dataloader    
@@ -57,7 +57,26 @@ def train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, l
             if (stop > 150):
                 final_epoch = epoch
 
+                # getting the full validation dataset
+                X, y = next(iter(test_dataloader))
+                # getting the predicted labels
+                test_pred_labels = torch.argmax(model(X), axis = 1)
+
+                # Compute the validation accuracy and store it
+                test_accuracy = 100 * torch.mean((test_pred_labels == y).float()).item()
+                print(f"Test accuracy: {test_accuracy:.2f}%")
+
                 break
+            
+        if (epoch == epochs - 1):
+            # getting the full validation dataset
+            X, y = next(iter(test_dataloader))
+            # getting the predicted labels
+            test_pred_labels = torch.argmax(model(X), axis = 1)
+
+            # Compute the validation accuracy and store it
+            test_accuracy = 100 * torch.mean((test_pred_labels == y).float()).item()
+            print(f"Test accuracy: {test_accuracy:.2f}%")
 
         # Update the learning rate
         old_lr = optimizer.param_groups[0]['lr']
@@ -66,4 +85,4 @@ def train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, l
         if old_lr != new_lr:
             print(f"Learning rate updated from {old_lr:.6f} to {new_lr:.6f}")
 
-    return pred_labels, train_accuracies, valid_accuracies, final_epoch, model
+    return test_pred_labels, train_accuracies, valid_accuracies, test_accuracy, final_epoch, model
