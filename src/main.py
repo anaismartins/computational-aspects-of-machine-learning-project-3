@@ -49,7 +49,7 @@ X = torch.tensor(X, dtype=torch.float)
 y = torch.tensor(y, dtype=torch.long)
 
 # setting the k for k-fold cross validation
-k = 10
+k = 2
 kfold = KFold(n_splits=k, shuffle=False)
 
 # prepping the lists to store the results
@@ -83,20 +83,25 @@ for train_index, valid_index in kfold.split(X, y):
     
     
     # MODEL SPECS ----------------------------------------------------------------------------------------
-    max_epochs = 200000
+    max_epochs = 20000
 
     a = "ReLU"
 
     n_layers = 10
     # generally 10 to 512 units
-    n_units = 261
-    n_units2 = 10
-    n_units3 = 512
+    n_units = 100
+    n_units2 = 100
+    n_units3 = 100
 
     # model needs to be called in the loop to reset the weights
-    model = Perceptron(num_classes)
-    m = "Perceptron"
-
+    #model = Perceptron(num_classes)
+    #m = "Perceptron"
+    #model = OneLayer(num_classes, n_units, a)
+    #m = "OneLayer"
+    #model = TwoLayers(num_classes, n_units, n_units2, a)
+    #m = "TwoLayers"
+    model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
+    m = "ThreeLayers"
 
     # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
     # initial learning rate
@@ -118,7 +123,7 @@ for train_index, valid_index in kfold.split(X, y):
     # factor by which the learning rate will be multiplied
     lr_decay_factor = 0.9 
     # number of epochs with no improvement after which learning rate will be reduced
-    lr_decay_patience = 50 
+    lr_decay_patience = 100 
     lr_sch = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = lr_decay_factor, patience = lr_decay_patience)
 
     print("\n\n\nFold " + str(fold) + " of " + str(k))
