@@ -52,12 +52,14 @@ y = torch.tensor(y, dtype=torch.long)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 # setting the k for k-fold cross validation
-k = 10
+k = 2
 kfold = KFold(n_splits=k, shuffle=False)
 
 # prepping the lists to store the results
 all_training_accuracies = []
 all_valid_accuracies = []
+all_train_loss = []
+all_valid_loss = []
 all_pred_labels = []
 all_final_epochs = []
 all_test_accuracies = []
@@ -136,12 +138,14 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     
 
     # TRAINING AND TESTING--------------------------------------------------------------------------------
-    pred_labels, train_accuracies, valid_accuracies, test_accuracy, final_epoch, model = train_model(train_dataloader, valid_dataloader, test_dataloader, model, loss_fn, optimizer, lr_sch, epochs = max_epochs)
+    pred_labels, train_accuracies, valid_accuracies, train_loss, valid_loss, test_accuracy, final_epoch, model = train_model(train_dataloader, valid_dataloader, test_dataloader, model, loss_fn, optimizer, lr_sch, epochs = max_epochs)
     
     # saving the results
     all_pred_labels.append(pred_labels)
     all_training_accuracies.append(train_accuracies)
     all_valid_accuracies.append(valid_accuracies)
+    all_train_loss.append(train_loss)
+    all_valid_loss.append(valid_loss)
     all_test_accuracies.append(test_accuracy)
     all_final_epochs.append(final_epoch)
     
@@ -192,7 +196,7 @@ cfm(y_test, av_pred_labels, filename, av_test_accuracy, size, num_classes)
 
 
 # PLOT RESULTS ------------------------------------------------------
-plot_results(all_training_accuracies, all_valid_accuracies, av_test_accuracy, k, filename)
+plot_results(all_training_accuracies, all_valid_accuracies, all_train_loss, all_valid_loss, av_test_accuracy, k, filename)
 
 
 # SAVE MODEL --------------------------------------------------------

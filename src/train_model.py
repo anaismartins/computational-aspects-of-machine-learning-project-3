@@ -16,7 +16,7 @@ def train_model(train_dataloader, valid_dataloader, test_dataloader, model, loss
     
     # initializing lists to store the accuracies, loss and setting the final_epoch to the initial number of max epochs
     train_accuracies, valid_accuracies = [], []
-    stored_loss = []
+    train_loss, valid_loss = [], []
     final_epoch = epochs
 
     # looping over the epochs
@@ -38,11 +38,16 @@ def train_model(train_dataloader, valid_dataloader, test_dataloader, model, loss
 
         # Compute the training accuracy and store it
         train_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
+        train_loss.append(loss.item())
 
         # getting the full validation dataset
         X, y = next(iter(valid_dataloader))
         # getting the predicted labels
-        pred_labels = torch.argmax(model(X), axis = 1)
+        pred = model(X)
+        pred_labels = torch.argmax(pred, axis = 1)
+        loss = loss_fn(pred, y)
+
+        valid_loss.append(loss.item())
 
         # Compute the validation accuracy and store it
         valid_accuracies.append(100 * torch.mean((pred_labels == y).float()).item())
@@ -85,4 +90,4 @@ def train_model(train_dataloader, valid_dataloader, test_dataloader, model, loss
         if old_lr != new_lr:
             print(f"Learning rate updated from {old_lr:.6f} to {new_lr:.6f}")
 
-    return test_pred_labels, train_accuracies, valid_accuracies, test_accuracy, final_epoch, model
+    return test_pred_labels, train_accuracies, valid_accuracies, train_loss, valid_loss, test_accuracy, final_epoch, model

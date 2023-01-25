@@ -33,11 +33,7 @@ def cfm(y, pred_labels, filename, test_accuracy, size, num_classes):
         labels.append(aux)
         aux = []
 
-    print(cf_matrix)
-
     labels = np.asarray(labels).reshape(num_classes,num_classes)
-
-    print(labels)
 
     plt.figure(figsize = (12,7))
     ax = sns.heatmap(cf_matrix, annot=labels, fmt='')
