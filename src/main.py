@@ -20,6 +20,7 @@ from VariableNet import VariableNet
 from OneLayer import OneLayer
 from TwoLayers import TwoLayers
 from ThreeLayers import ThreeLayers
+from FourLayers import FourLayers
 
 from train_model import train_model
 from plot_results import plot_results
@@ -49,7 +50,7 @@ X = torch.tensor(X, dtype=torch.float)
 y = torch.tensor(y, dtype=torch.long)
 
 # setting the k for k-fold cross validation
-k = 2
+k = 10
 kfold = KFold(n_splits=k, shuffle=False)
 
 # prepping the lists to store the results
@@ -89,9 +90,10 @@ for train_index, valid_index in kfold.split(X, y):
 
     n_layers = 10
     # generally 10 to 512 units
-    n_units = 100
-    n_units2 = 100
-    n_units3 = 100
+    n_units = 128
+    n_units2 = 128
+    n_units3 = 128
+    n_units4 = 128
 
     # model needs to be called in the loop to reset the weights
     #model = Perceptron(num_classes)
@@ -100,8 +102,10 @@ for train_index, valid_index in kfold.split(X, y):
     #m = "OneLayer"
     #model = TwoLayers(num_classes, n_units, n_units2, a)
     #m = "TwoLayers"
-    model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
-    m = "ThreeLayers"
+    #model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
+    #m = "ThreeLayers"
+    model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
+    m = "FourLayers"
 
     # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
     # initial learning rate
@@ -170,7 +174,7 @@ for i in range(0, k):
 final_epoch = round(final_epoch/k)
 
 # setting the filename for all
-filename = filename(m, detector, a, l, o, lr, final_epoch, num_batches, n_layers, n_units, n_units2, n_units3)
+filename = filename(m, detector, a, l, o, lr, final_epoch, num_batches, n_layers, n_units, n_units2, n_units3, n_units4)
 
 
 # CONFUISON MATRIX --------------------------------------------------

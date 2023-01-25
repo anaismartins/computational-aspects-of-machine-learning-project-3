@@ -1,4 +1,4 @@
-def filename(m, detector, a, l, o, lr, epochs, num_batches, n_layers, n_units, n_units2, n_units3):
+def filename(m, detector, a, l, o, lr, epochs, num_batches, n_layers, n_units, n_units2, n_units3, n_units4):
     """
     Creates the filename for the saved model and the saved results
     :param m: model (string with the name)
@@ -26,5 +26,7 @@ def filename(m, detector, a, l, o, lr, epochs, num_batches, n_layers, n_units, n
         filename = "Acc_" + detector + "_TwoLayers" + str(n_units) + "_" + str(n_units2) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches"
     elif m == "ThreeLayers":
         filename = "Acc_" + detector + "_ThreeLayers" + str(n_units) + "_" + str(n_units2) + "_" + str(n_units3) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches"
+    elif m == "FourLayers":
+        filename = "Acc_" + detector + "_FourLayers" + str(n_units) + "_" + str(n_units2) + "_" + str(n_units3) + "_" + str(n_units4) + "Units_" + a + "_" + l + "_" + o + "_" + str(lr) + "lr_" + str(epochs) + "epochs_" + str(num_batches) + "batches"
 
     return filename
