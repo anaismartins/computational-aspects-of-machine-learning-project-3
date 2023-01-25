@@ -49,6 +49,9 @@ y = data[:,-1]
 X = torch.tensor(X, dtype=torch.float)
 y = torch.tensor(y, dtype=torch.long)
 
+# splitting the data into train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+
 # setting the k for k-fold cross validation
 k = 10
 kfold = KFold(n_splits=k, shuffle=False)
@@ -56,18 +59,21 @@ kfold = KFold(n_splits=k, shuffle=False)
 # prepping the lists to store the results
 all_training_accuracies = []
 all_valid_accuracies = []
+all_train_loss = []
+all_valid_loss = []
 all_pred_labels = []
 all_final_epochs = []
+all_test_accuracies = []
 
 # starting iteration
 fold = 1
 
-for train_index, valid_index in kfold.split(X, y):  
+for train_index, valid_index in kfold.split(X_train, y_train):  
     # splitting the data into train and validation for each fold
-    X_train_fold = X[train_index] 
-    y_train_fold = y[train_index] 
-    X_valid_fold = X[valid_index] 
-    y_valid_fold = y[valid_index] 
+    X_train_fold = X_train[train_index] 
+    y_train_fold = y_train[train_index] 
+    X_valid_fold = X_train[valid_index] 
+    y_valid_fold = y_train[valid_index] 
 
     # passing the data to torch datasets
     train_fold_data = TensorDataset(X_train_fold, y_train_fold)
@@ -81,10 +87,12 @@ for train_index, valid_index in kfold.split(X, y):
     train_dataloader = DataLoader(train_fold_data, shuffle=True, batch_size=batch_size) 
     # loading the whole test data at once
     valid_dataloader = DataLoader(valid_fold_data, batch_size=len(valid_fold_data.tensors[0])) 
+
+    test_dataloader = DataLoader(TensorDataset(X_test, y_test), batch_size=len(X_test))
     
     
     # MODEL SPECS ----------------------------------------------------------------------------------------
-    max_epochs = 20000
+    max_epochs = 200
 
     a = "ReLU"
 
@@ -96,8 +104,8 @@ for train_index, valid_index in kfold.split(X, y):
     n_units4 = 128
 
     # model needs to be called in the loop to reset the weights
-    #model = Perceptron(num_classes)
-    #m = "Perceptron"
+    model = Perceptron(num_classes)
+    m = "Perceptron"
     #model = OneLayer(num_classes, n_units, a)
     #m = "OneLayer"
     #model = TwoLayers(num_classes, n_units, n_units2, a)
@@ -134,12 +142,15 @@ for train_index, valid_index in kfold.split(X, y):
     
 
     # TRAINING AND TESTING--------------------------------------------------------------------------------
-    pred_labels, train_accuracies, valid_accuracies, final_epoch, model = train_model(train_dataloader, valid_dataloader, model, loss_fn, optimizer, lr_sch, epochs = max_epochs)
+    pred_labels, train_accuracies, valid_accuracies, train_loss, valid_loss, test_accuracy, final_epoch, model = train_model(train_dataloader, valid_dataloader, test_dataloader, model, loss_fn, optimizer, lr_sch, epochs = max_epochs)
     
     # saving the results
     all_pred_labels.append(pred_labels)
     all_training_accuracies.append(train_accuracies)
     all_valid_accuracies.append(valid_accuracies)
+    all_train_loss.append(train_loss)
+    all_valid_loss.append(valid_loss)
+    all_test_accuracies.append(test_accuracy)
     all_final_epochs.append(final_epoch)
     
     # saving the best model
@@ -155,17 +166,24 @@ for train_index, valid_index in kfold.split(X, y):
 
 
 # FINAL ACCURACY ----------------------------------------------------------------------------------------
-# averaged validation accuracies
-av_validation_accuracy = 0
+# averaged test accuracies
+av_test_accuracy = 0
 for i in range(0, k):
-    av_validation_accuracy += all_valid_accuracies[i][-1]
-av_validation_accuracy = av_validation_accuracy/k
-print("Average validation accuracy: " + str(av_validation_accuracy))
+    av_test_accuracy += all_test_accuracies[i]
+av_test_accuracy = av_test_accuracy/k
+
+accuracy_error = 3 * np.std(all_test_accuracies) / np.sqrt(k)
+print("Average test accuracy: " + str(round(av_test_accuracy, 2)) + " +/- " + str(round(accuracy_error, 2)) + " %")
 
 # ordered predicted labels to match the order of the original dataset and do the cfm afterwards
-ordered_pred_labels = [0] * len(y)
-for i in range(0, k):
-    ordered_pred_labels[len(all_pred_labels[0])*i:len(all_pred_labels[0])*(i+1)] = all_pred_labels[i]
+av_pred_labels = [0] * len(y_test)
+count = [0] * num_classes
+
+for j in range(0, len(y_test)):
+    for i in range(0, k):
+        count[all_pred_labels[i][j]] += 1
+        av_pred_labels[j] = count.index(max(count))
+    count = [0] * num_classes
   
 # averaging the final epoch
 final_epoch = 0
@@ -176,14 +194,14 @@ final_epoch = round(final_epoch/k)
 # setting the filename for all
 filename = filename(m, detector, a, l, o, lr, final_epoch, num_batches, n_layers, n_units, n_units2, n_units3, n_units4)
 
-
-# CONFUISON MATRIX --------------------------------------------------
-cfm(y, ordered_pred_labels, filename, av_validation_accuracy)
+size = len(y_train) / num_classes 
+# CONFUSION MATRIX --------------------------------------------------
+cfm(y_test, av_pred_labels, filename, av_test_accuracy, size, num_classes)
 
 
 # PLOT RESULTS ------------------------------------------------------
-plot_results(all_training_accuracies, all_valid_accuracies, av_validation_accuracy, k, filename)
+plot_results(all_training_accuracies, all_valid_accuracies, all_train_loss, all_valid_loss, av_test_accuracy, k, filename)
 
 
 # SAVE MODEL --------------------------------------------------------
-save_model(best_model, av_validation_accuracy, filename)
+save_model(best_model, av_test_accuracy, filename)
