@@ -36,7 +36,7 @@ def cfm(y, pred_labels, filename, test_accuracy, size, num_classes):
     labels = np.asarray(labels).reshape(num_classes,num_classes)
 
     plt.figure(figsize = (12,7))
-    ax = sns.heatmap(cf_matrix, annot=labels, fmt='')
+    ax = sns.heatmap(cf_matrix, annot=labels, fmt='', vmin=0, vmax=100)
 
     ax.set_xlabel("Predicted Values")
     ax.set_ylabel("Actual Values")

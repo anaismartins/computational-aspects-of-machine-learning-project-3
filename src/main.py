@@ -53,7 +53,7 @@ y = torch.tensor(y, dtype=torch.long)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 # setting the k for k-fold cross validation
-k = 10
+k = 2
 kfold = KFold(n_splits=k, shuffle=False)
 
 # prepping the lists to store the results
@@ -112,8 +112,8 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     #m = "TwoLayers"
     #model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
     #m = "ThreeLayers"
-    model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
-    m = "FourLayers"
+    #model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
+    #m = "FourLayers"
 
     # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
     # initial learning rate
