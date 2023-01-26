@@ -13,7 +13,7 @@ whistle_files = []
 folder_path = "../../../lopezm/ML_projects/Projects_2022/Project_3/Data/dataframes/" 
 
 # Set the detector to use
-detector = "H1"
+detector = "V1"
 
 # Iterate over all files in the given folder
 for filename in os.listdir(folder_path):
@@ -150,8 +150,8 @@ if detector != 'V1':
     np.save('../datasets/fast_scattering_triggers_' + detector + '.npy', fast_scattering_triggers)
 
 if detector != 'V1':
-    injection_triggers = injection_triggers[0:fast_scattering_triggers.shape[0]]
-    blip_triggers = blip_triggers[0:fast_scattering_triggers.shape[0]]
+    injection_triggers = injection_triggers[0:blip_triggers.shape[0]]
+    #blip_triggers = blip_triggers[0:fast_scattering_triggers.shape[0]]
     koyfish_triggers = koyfish_triggers[0:fast_scattering_triggers.shape[0]]
     lowfreq_triggers = lowfreq_triggers[0:fast_scattering_triggers.shape[0]]
     tomte_triggers = tomte_triggers[0:fast_scattering_triggers.shape[0]]
@@ -166,3 +166,9 @@ if detector != 'V1':
     np.random.shuffle(dataset)
 
     np.save('../datasets/dataset_all_' + detector + '.npy', dataset)
+    
+injection_triggers = injection_triggers[0:blip_triggers.shape[0]]
+
+inj_blip = np.append(injection_triggers, blip_triggers, axis = 0)
+    
+np.save('../datasets/inj_blip_' + detector + '.npy', inj_blip)

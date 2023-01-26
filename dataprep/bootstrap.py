@@ -2,9 +2,9 @@ import random
 import numpy as np
 
 # Set the detector to use
-detector = "H1"
+detector = "V1"
 
-# Load the data
+# Load all the data
 injections = np.load("../datasets/injection_triggers_" + detector + ".npy").tolist()
 blips = np.load("../datasets/blip_triggers_" + detector + ".npy").tolist()
 koyfishes = np.load("../datasets/koyfish_triggers_" + detector + ".npy").tolist()
