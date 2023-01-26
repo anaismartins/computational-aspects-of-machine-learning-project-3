@@ -3,6 +3,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import matplotlib
 
 # sklearn
 from sklearn.model_selection import train_test_split
@@ -30,7 +31,7 @@ from filename import filename
 
 
 # DEFINE DETECTOR ----------------------------------------------------------------------------------------
-detector = "H1"
+detector = "V1"
 
 if detector != "V1":
     num_classes = 7
@@ -53,7 +54,7 @@ y = torch.tensor(y, dtype=torch.long)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 # setting the k for k-fold cross validation
-k = 2
+k = 9
 kfold = KFold(n_splits=k, shuffle=False)
 
 # prepping the lists to store the results
@@ -92,7 +93,7 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     
     
     # MODEL SPECS ----------------------------------------------------------------------------------------
-    max_epochs = 200
+    max_epochs = 200000
 
     a = "ReLU"
 
@@ -184,6 +185,50 @@ for j in range(0, len(y_test)):
         count[all_pred_labels[i][j]] += 1
         av_pred_labels[j] = count.index(max(count))
     count = [0] * num_classes
+
+# SCATTER PLOT WITH COLORS FOR CLASSES ------------------------------------------------------------------
+
+X_real_injections = []
+y_real_injections = []
+
+for i in range(0, len(y_test)):
+    if y_test[i] == 0:
+        X_real_injections.append(X_test[i])
+        y_real_injections.append(av_pred_labels[i])
+
+m_1 = []
+m_2 = []
+s_1 = []
+s_2 = []
+
+for i in range(0, len(y_real_injections)):
+    m_1.append(X_real_injections[i][2])
+    m_2.append(X_real_injections[i][3])
+    s_1.append(X_real_injections[i][4])
+    s_2.append(X_real_injections[i][5])
+
+# assign categories
+categories = np.array(y_real_injections)
+ 
+# use colormap
+colormap = np.array(['#d73027', '#fc8d59', '#fee090', '#ffffbf', '#e0f3f8', '#91bfdb', '#4575b4'])
+labels = np.array(["Injection", "Blips", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering"])
+
+# depict illustration
+#plt.scatter(m_1, m_2, s=50, c=colormap[categories], label = labels[categories])
+#plt.scatter(m_1, m_2, c=y_real_injections, cmap=matplotlib.colors.ListedColormap(colormap))
+plt.title("Classification of Real Injections")
+plt.xlabel("Mass 1")
+plt.ylabel("Mass 2")
+#plt.legend(["Injection", "Blips", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering"])
+plt.show()
+
+plt.scatter(s_1, s_2, s=50, c=colormap[categories], label = labels[categories])
+plt.title("Classification of Real Injections")
+plt.xlabel("Spin z1")
+plt.ylabel("Spin z2")
+#plt.legend(["Injection", "Blips", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering"])
+plt.show()
   
 # averaging the final epoch
 final_epoch = 0
