@@ -95,7 +95,7 @@ for train_index, valid_index in kfold.split(X_train, y_train):
 
     a = "ReLU"
 
-    n_layers = 10
+    n_layers = 2
     # generally 10 to 512 units
     n_units = 350
     n_units2 = 100
@@ -110,6 +110,8 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     #m = "TwoLayers"
     #model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
     #m = "ThreeLayers"
+    #model = VariableNet(num_classes, n_units, n_layers, a)
+    #m = "VariableNet"
 
     # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
     # initial learning rate

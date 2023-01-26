@@ -13,7 +13,7 @@ class VariableNet(nn.Module):
         super().__init__()
 
         if a == "ReLU":
-            self.activation = nn.ReLU
+            self.activation = nn.functional.relu
 
         self.n_layers = n_layers
 

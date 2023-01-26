@@ -49,37 +49,37 @@ def plot_results(train_accuracies, valid_accuracies, train_loss, valid_loss, tes
                 if filename in folder and float(folder.split("Acc")[0]) < round(test_accuracy, 2):
                     shutil.rmtree("../output/results/" + folder)
                     os.makedirs("../output/results/" + str(round(test_accuracy, 2)) + filename)
-                    plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/" + str(i) + ".png")
+                    plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/acc" + str(i) + ".png")
                     first = False
             else:
-                plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/" + str(i) + ".png")
+                plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/acc" + str(i) + ".png")
         
         if first:
             # if there isn't anything with the same name we create the new folder and save the plots
             if not exists:
                 os.makedirs("../output/results/" + str(round(test_accuracy, 2)) + filename)
-                plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/" + str(i) + ".png")
+                plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/acc" + str(i) + ".png")
                 first = False
         else:
-            plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/" + str(i) + ".png")
+            plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/acc" + str(i) + ".png")
 
-    # LOSS -----------------------------------------------------------------------------------------------
+    # LOSS --------------------------------------------------------------------------------------------------
     for i in range(0, k):
 
         #clearing the plot before starting
         plt.clf()
 
         # plotting training accuracy
-        plt.plot(train_accuracies[i])
+        plt.plot(train_loss[i])
         
         # plotting validation accuracy
-        plt.plot(valid_accuracies[i])
+        plt.plot(valid_loss[i])
 
-        plt.title("Model Accuracy")
+        plt.title("Model Loss")
         plt.xlabel("Epoch")
-        plt.ylabel("Accuracy")
+        plt.ylabel("Loss")
 
-        plt.legend(['Training', 'Validation'], loc='lower right')
+        plt.legend(['Training', 'Validation'], loc='upper right')
 
         dir_list = os.listdir("../output/results/")
 
@@ -96,18 +96,18 @@ def plot_results(train_accuracies, valid_accuracies, train_loss, valid_loss, tes
                 if filename in folder and float(folder.split("Acc")[0]) < round(test_accuracy, 2):
                     shutil.rmtree("../output/results/" + folder)
                     os.makedirs("../output/results/" + str(round(test_accuracy, 2)) + filename)
-                    plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/" + str(i) + ".png")
+                    plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/loss" + str(i) + ".png")
                     first = False
             else:
-                plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/" + str(i) + ".png")
+                plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/loss" + str(i) + ".png")
         
         if first:
             # if there isn't anything with the same name we create the new folder and save the plots
             if not exists:
                 os.makedirs("../output/results/" + str(round(test_accuracy, 2)) + filename)
-                plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/" + str(i) + ".png")
+                plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/loss" + str(i) + ".png")
                 first = False
         else:
-            plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/" + str(i) + ".png")
+            plt.savefig("../output/results/" + str(round(test_accuracy, 2)) + filename + "/loss" + str(i) + ".png")
         
         
