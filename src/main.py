@@ -31,7 +31,7 @@ from filename import filename
 
 
 # DEFINE DETECTOR ----------------------------------------------------------------------------------------
-detector = "H1"
+detector = "V1"
 
 if detector != "V1":
     num_classes = 7
@@ -115,6 +115,8 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     #m = "ThreeLayers"
     #model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
     #m = "FourLayers"
+    model = VariableNet(num_classes, n_units, n_layers, a)
+    m = "VariableNet"
 
     # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
     # initial learning rate

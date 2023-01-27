@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import os
 
 def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector):
-def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector):
     """
     function that plots the confusion matrix and saves it in the output folder
     
