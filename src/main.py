@@ -54,7 +54,7 @@ y = torch.tensor(y, dtype=torch.long)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 # setting the k for k-fold cross validation
-k = 2
+k = 9
 kfold = KFold(n_splits=k, shuffle=False)
 
 # prepping the lists to store the results
@@ -93,7 +93,7 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     
     
     # MODEL SPECS ----------------------------------------------------------------------------------------
-    max_epochs = 10
+    max_epochs = 200000
 
     a = "ReLU"
 
@@ -105,8 +105,8 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     n_units4 = 128
 
     # model needs to be called in the loop to reset the weights
-    model = Perceptron(num_classes)
-    m = "Perceptron"
+    #model = Perceptron(num_classes)
+    #m = "Perceptron"
     #model = OneLayer(num_classes, n_units, a)
     #m = "OneLayer"
     #model = TwoLayers(num_classes, n_units, n_units2, a)
@@ -115,8 +115,6 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     #m = "ThreeLayers"
     #model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
     #m = "FourLayers"
-    #model = VariableNet(num_classes, n_units, n_layers, a)
-    #m = "VariableNet"
 
     # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
     # initial learning rate
