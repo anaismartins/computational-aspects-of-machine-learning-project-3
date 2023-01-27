@@ -31,7 +31,7 @@ from filename import filename
 
 
 # DEFINE DETECTOR ----------------------------------------------------------------------------------------
-detector = "V1"
+detector = "H1"
 
 if detector != "V1":
     num_classes = 7
@@ -54,7 +54,7 @@ y = torch.tensor(y, dtype=torch.long)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 # setting the k for k-fold cross validation
-k = 9
+k = 2
 kfold = KFold(n_splits=k, shuffle=False)
 
 # prepping the lists to store the results
@@ -93,13 +93,13 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     
     
     # MODEL SPECS ----------------------------------------------------------------------------------------
-    max_epochs = 200000
+    max_epochs = 10
 
     a = "ReLU"
 
-    n_layers = 2
+    n_layers = 3
     # generally 10 to 512 units
-    n_units = 128
+    n_units = 350
     n_units2 = 128
     n_units3 = 128
     n_units4 = 128
@@ -115,6 +115,8 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     #m = "ThreeLayers"
     #model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
     #m = "FourLayers"
+    #model = VariableNet(num_classes, n_units, n_layers, a)
+    #m = "VariableNet"
 
     # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
     # initial learning rate
@@ -216,18 +218,18 @@ labels = np.array(["Injection", "Blips", "Koyfish", "Low Frequency Burst", "Tomt
 
 # depict illustration
 #plt.scatter(m_1, m_2, s=50, c=colormap[categories], label = labels[categories])
-#plt.scatter(m_1, m_2, c=y_real_injections, cmap=matplotlib.colors.ListedColormap(colormap))
+plt.scatter(m_1, m_2, c=y_real_injections, cmap=matplotlib.colors.ListedColormap(colormap))
 plt.title("Classification of Real Injections")
 plt.xlabel("Mass 1")
 plt.ylabel("Mass 2")
 #plt.legend(["Injection", "Blips", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering"])
 plt.show()
 
-plt.scatter(s_1, s_2, s=50, c=colormap[categories], label = labels[categories])
+scatter = plt.scatter(s_1, s_2, s=50, c=colormap[categories])
 plt.title("Classification of Real Injections")
 plt.xlabel("Spin z1")
 plt.ylabel("Spin z2")
-#plt.legend(["Injection", "Blips", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering"])
+#plt.legend(labels, loc='upper right', bbox_to_anchor=(1, 1))
 plt.show()
   
 # averaging the final epoch
@@ -241,7 +243,7 @@ filename = filename(m, detector, a, l, o, lr, final_epoch, num_batches, n_layers
 
 size = len(y_train) / num_classes 
 # CONFUSION MATRIX --------------------------------------------------
-cfm(y_test, av_pred_labels, filename, av_test_accuracy, size, num_classes)
+cfm(y_test, av_pred_labels, filename, av_test_accuracy, size, num_classes, detector)
 
 
 # PLOT RESULTS ------------------------------------------------------
