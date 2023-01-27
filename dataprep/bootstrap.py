@@ -2,7 +2,7 @@ import random
 import numpy as np
 
 # Set the detector to use
-detector = "V1"
+detector = "L1"
 
 # Load all the data
 injections = np.load("../datasets/injection_triggers_" + detector + ".npy").tolist()
