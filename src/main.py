@@ -28,6 +28,7 @@ from plot_results import plot_results
 from cfm import cfm
 from save_model import save_model
 from filename import filename
+from prediction_plots import prediction_plots
 
 
 # DEFINE DETECTOR ----------------------------------------------------------------------------------------
@@ -54,7 +55,7 @@ y = torch.tensor(y, dtype=torch.long)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 # setting the k for k-fold cross validation
-k = 9
+k = 2
 kfold = KFold(n_splits=k, shuffle=False)
 
 # prepping the lists to store the results
@@ -93,7 +94,7 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     
     
     # MODEL SPECS ----------------------------------------------------------------------------------------
-    max_epochs = 200000
+    max_epochs = 10
 
     a = "ReLU"
 
@@ -105,8 +106,8 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     n_units4 = 128
 
     # model needs to be called in the loop to reset the weights
-    #model = Perceptron(num_classes)
-    #m = "Perceptron"
+    model = Perceptron(num_classes)
+    m = "Perceptron"
     #model = OneLayer(num_classes, n_units, a)
     #m = "OneLayer"
     #model = TwoLayers(num_classes, n_units, n_units2, a)
@@ -115,8 +116,8 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     #m = "ThreeLayers"
     #model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
     #m = "FourLayers"
-    model = VariableNet(num_classes, n_units, n_layers, a)
-    m = "VariableNet"
+    #model = VariableNet(num_classes, n_units, n_layers, a)
+    #m = "VariableNet"
 
     # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
     # initial learning rate
@@ -188,58 +189,17 @@ for j in range(0, len(y_test)):
         av_pred_labels[j] = count.index(max(count))
     count = [0] * num_classes
 
-# SCATTER PLOT WITH COLORS FOR CLASSES ------------------------------------------------------------------
-
-X_real_injections = []
-y_real_injections = []
-
-for i in range(0, len(y_test)):
-    if y_test[i] == 0:
-        X_real_injections.append(X_test[i])
-        y_real_injections.append(av_pred_labels[i])
-
-m_1 = []
-m_2 = []
-s_1 = []
-s_2 = []
-
-for i in range(0, len(y_real_injections)):
-    m_1.append(X_real_injections[i][2])
-    m_2.append(X_real_injections[i][3])
-    s_1.append(X_real_injections[i][4])
-    s_2.append(X_real_injections[i][5])
-
-# assign categories
-categories = np.array(y_real_injections)
- 
-# use colormap
-colormap = np.array(['#d73027', '#fc8d59', '#fee090', '#ffffbf', '#e0f3f8', '#91bfdb', '#4575b4'])
-labels = np.array(["Injection", "Blips", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering"])
-
-# depict illustration
-#plt.scatter(m_1, m_2, s=50, c=colormap[categories], label = labels[categories])
-plt.scatter(m_1, m_2, c=y_real_injections, cmap=matplotlib.colors.ListedColormap(colormap))
-plt.title("Classification of Real Injections")
-plt.xlabel("Mass 1")
-plt.ylabel("Mass 2")
-#plt.legend(["Injection", "Blips", "Koyfish", "Low Frequency Burst", "Tomte", "Whistle", "Fast Scattering"])
-plt.show()
-
-scatter = plt.scatter(s_1, s_2, s=50, c=colormap[categories])
-plt.title("Classification of Real Injections")
-plt.xlabel("Spin z1")
-plt.ylabel("Spin z2")
-#plt.legend(labels, loc='upper right', bbox_to_anchor=(1, 1))
-plt.show()
-  
-# averaging the final epoch
+ # averaging the final epoch
 final_epoch = 0
 for i in range(0, k):
     final_epoch += all_final_epochs[i]
-final_epoch = round(final_epoch/k)
+final_epoch = round(final_epoch/k)   
 
 # setting the filename for all
 filename = filename(m, detector, a, l, o, lr, final_epoch, num_batches, n_layers, n_units, n_units2, n_units3, n_units4)
+
+# SCATTER PLOT WITH COLORS FOR CLASSES ------------------------------------------------------------------
+prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, av_test_accuracy)
 
 size = len(y_train) / num_classes 
 # CONFUSION MATRIX --------------------------------------------------
