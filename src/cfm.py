@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector):
+def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector, binary):
     """
     function that plots the confusion matrix and saves it in the output folder
     
@@ -17,10 +17,13 @@ def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector):
     """
 
     # confusion matrix
-    if detector != "V1":
-        classes = ("Injection", "Blip", "Koyfish", "Low Freq", "Tomte", "Whistle", "Fast Scat")
+    if not binary:
+        if detector != "V1":
+            classes = ("Injection", "Blip", "Koyfish", "Low Freq", "Tomte", "Whistle", "Fast Scat")
+        else:
+            classes = ("Injection", "Blip", "Koyfish", "Low Freq", "Tomte", "Whistle")
     else:
-        classes = ("Injection", "Blip", "Koyfish", "Low Freq", "Tomte", "Whistle")
+        classes = ("Injection", "Blip")
 
     cf_matrix = confusion_matrix(y, pred_labels)
 
@@ -48,11 +51,16 @@ def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector):
     ax.xaxis.set_ticklabels(classes)
     ax.yaxis.set_ticklabels(classes)
 
-    # getting the directory to store the confusion matrix
-    dir_list = os.listdir("../output/cfms/")
-
     exists = False
     filename = filename + ".png"
+
+    if not binary:
+        folder_path = "../output/cfms/"
+    else:
+        folder_path = "../output/cfms/binary/"
+
+    # getting the directory to store the confusion matrix
+    dir_list = os.listdir(folder_path)
 
     for file in dir_list:
         # checking if the same model already is saved
@@ -61,9 +69,9 @@ def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector):
 
             # check if the accuracy is better and save the model with the best accuracy
             if float(file.split("Acc")[0]) < round(test_accuracy, 2):
-                os.remove("../output/cfms/" + file)
-                plt.savefig("../output/cfms/" + str(round(test_accuracy, 2)) + filename)
+                os.remove(folder_path + file)
+                plt.savefig(folder_path + str(round(test_accuracy, 2)) + filename)
 
     # if the model is not saved yet, save it
     if not exists:
-        plt.savefig("../output/cfms/" + str(round(test_accuracy, 2)) + filename)
+        plt.savefig(folder_path + str(round(test_accuracy, 2)) + filename)

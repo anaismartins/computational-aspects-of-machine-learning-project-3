@@ -32,16 +32,20 @@ from prediction_plots import prediction_plots
 
 
 # DEFINE DETECTOR ----------------------------------------------------------------------------------------
-detector = "L1"
-
-if detector != "V1":
-    num_classes = 7
-else:
-    num_classes = 6
+detector = "H1"
+binary = True
 
 
 # LOAD DATA AND SPLIT INTO TRAIN AND TEST -----------------------------------------------------------------
-data = np.load("../datasets/dataset_all_" + detector + "_bootstrap.npy")
+if not binary:
+    data = np.load("../datasets/dataset_all_" + detector + "_bootstrap.npy")
+    if detector != "V1":
+        num_classes = 7
+    else:
+        num_classes = 6
+else:
+    data = np.load("../datasets/inj_blip_" + detector + ".npy")
+    num_classes = 2
 
 # dividing the data into X and y
 X = data[:,:-1]
@@ -55,7 +59,7 @@ y = torch.tensor(y, dtype=torch.long)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 # setting the k for k-fold cross validation
-k = 10
+k = 9
 kfold = KFold(n_splits=k, shuffle=False)
 
 # prepping the lists to store the results
@@ -94,13 +98,13 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     
     
     # MODEL SPECS ----------------------------------------------------------------------------------------
-    max_epochs = 10000
+    max_epochs = 200000
 
     a = "ReLU"
 
     n_layers = 3
     # generally 10 to 512 units
-    n_units = 350
+    n_units = 10
     n_units2 = 128
     n_units3 = 128
     n_units4 = 128
@@ -114,10 +118,10 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     #m = "TwoLayers"
     #model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
     #m = "ThreeLayers"
-    model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
-    m = "FourLayers"
-    #model = VariableNet(num_classes, n_units, n_layers, a)
-    #m = "VariableNet"
+    #model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
+    #m = "FourLayers"
+    model = VariableNet(num_classes, n_units, n_layers, a)
+    m = "VariableNet"
 
     # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
     # initial learning rate
@@ -129,10 +133,14 @@ for train_index, valid_index in kfold.split(X_train, y_train):
 
     # setting weights for loss function
     l = "CrossEntropyLoss"
-    if detector != "V1":
-        class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle, fast scattering]
+    if not binary:
+        if detector != "V1":
+            class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle, fast scattering]
+        else:
+            class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle]
     else:
-        class_weights = torch.FloatTensor([1, 1, 1, 1, 1, 1]) #[injection, blips, koyfish, lowfreq, tomte, whistle]
+        class_weights = torch.FloatTensor([1, 1])
+    
     loss_fn = nn.CrossEntropyLoss(weight=class_weights)
 
     # smart learning rate
@@ -199,16 +207,16 @@ final_epoch = round(final_epoch/k)
 filename = filename(m, detector, a, l, o, lr, final_epoch, num_batches, n_layers, n_units, n_units2, n_units3, n_units4)
 
 # SCATTER PLOT WITH COLORS FOR CLASSES ------------------------------------------------------------------
-prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, av_test_accuracy)
+prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, av_test_accuracy, binary)
 
 size = len(y_train) / num_classes 
 # CONFUSION MATRIX --------------------------------------------------
-cfm(y_test, av_pred_labels, filename, av_test_accuracy, size, num_classes, detector)
+cfm(y_test, av_pred_labels, filename, av_test_accuracy, size, num_classes, detector, binary)
 
 
 # PLOT RESULTS ------------------------------------------------------
-plot_results(all_training_accuracies, all_valid_accuracies, all_train_loss, all_valid_loss, av_test_accuracy, k, filename)
+plot_results(all_training_accuracies, all_valid_accuracies, all_train_loss, all_valid_loss, av_test_accuracy, k, filename, binary)
 
 
 # SAVE MODEL --------------------------------------------------------
-save_model(best_model, av_test_accuracy, filename)
+save_model(best_model, av_test_accuracy, filename, binary)

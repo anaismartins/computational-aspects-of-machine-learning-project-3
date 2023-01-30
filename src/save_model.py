@@ -1,7 +1,7 @@
 import torch
 import os
 
-def save_model(model, test_accuracy, filename):
+def save_model(model, test_accuracy, filename, binary):
     """
     function that saves the model in the output folder
     :param model: the model (string of the model name)
@@ -9,7 +9,12 @@ def save_model(model, test_accuracy, filename):
     :param filename: name to save the model as
     """    
 
-    dir_list = os.listdir("../output/models/")
+    if not binary:
+        folder_path = "../output/models/"
+    else:
+        folder_path = "../output/models/binary/"
+
+    dir_list = os.listdir(folder_path)
     
     # bool for checking if we already have this model
     exists = False
@@ -22,8 +27,8 @@ def save_model(model, test_accuracy, filename):
             exists = True
 
         if filename in file and float(file.split("Acc")[0]) < round(test_accuracy, 2):
-            os.remove("../output/models/" + file)
-            torch.save(model.state_dict(), "../output/models/" + str(round(test_accuracy, 2)) + filename)
+            os.remove(folder_path + file)
+            torch.save(model.state_dict(), folder_path + str(round(test_accuracy, 2)) + filename)
 
     if not exists:
-        torch.save(model.state_dict(), "../output/models/" + str(round(test_accuracy, 2)) + filename)
+        torch.save(model.state_dict(), folder_path + str(round(test_accuracy, 2)) + filename)

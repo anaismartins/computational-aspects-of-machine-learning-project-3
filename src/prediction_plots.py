@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import shutil
 
-def prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, test_accuracy):
+def prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, test_accuracy, binary):
 
     X_real_injections = []
     y_real_injections = []
@@ -51,8 +52,13 @@ def prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, test
 
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
+    if not binary:
+        folder_path = "../output/pred_plots/"
+    else:
+        folder_path = "../output/pred_plots/binary/"
+
     # getting the directory to store the confusion matrix
-    dir_list = os.listdir("../output/pred_plots/")
+    dir_list = os.listdir(folder_path)
 
     # initializing the exists boolean to False since we haven't found the folder yet
     exists = False
@@ -66,21 +72,21 @@ def prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, test
         # if it's running for the first time, check for the existance of the folder for this same model and delete it if the new accuracy is better
         if first:
             if filename in folder and float(folder.split("Acc")[0]) < round(test_accuracy, 2):
-                shutil.rmtree("../output/pred_plots/" + folder)
-                os.makedirs("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename)
-                plt.savefig("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename + "/masses.png")
+                shutil.rmtree(folder_path + folder)
+                os.makedirs(folder_path + str(round(test_accuracy, 2)) + filename)
+                plt.savefig(folder_path + str(round(test_accuracy, 2)) + filename + "/masses.png")
                 first = False
         else:
-            plt.savefig("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename + "/masses.png")
+            plt.savefig(folder_path + str(round(test_accuracy, 2)) + filename + "/masses.png")
     
     if first:
         # if there isn't anything with the same name we create the new folder and save the plots
         if not exists:
-            os.makedirs("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename)
-            plt.savefig("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename + "/masses.png")
+            os.makedirs(folder_path + str(round(test_accuracy, 2)) + filename)
+            plt.savefig(folder_path + str(round(test_accuracy, 2)) + filename + "/masses.png")
             first = False
     else:
-        plt.savefig("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename + "/masses.png")
+        plt.savefig(folder_path + str(round(test_accuracy, 2)) + filename + "/masses.png")
 
     plt.clf()
 
@@ -109,7 +115,7 @@ def prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, test
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
     # getting the directory to store the confusion matrix
-    dir_list = os.listdir("../output/pred_plots/")
+    dir_list = os.listdir(folder_path)
 
     # initializing the exists boolean to False since we haven't found the folder yet
     exists = False
@@ -122,18 +128,18 @@ def prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, test
         # if it's running for the first time, check for the existance of the folder for this same model and delete it if the new accuracy is better
         if first:
             if filename in folder and float(folder.split("Acc")[0]) < round(test_accuracy, 2):
-                shutil.rmtree("../output/pred_plots/" + folder)
-                os.makedirs("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename)
-                plt.savefig("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename + "/spins.png")
+                shutil.rmtree(folder_path + folder)
+                os.makedirs(folder_path + str(round(test_accuracy, 2)) + filename)
+                plt.savefig(folder_path + str(round(test_accuracy, 2)) + filename + "/spins.png")
                 first = False
         else:
-            plt.savefig("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename + "/spins.png")
+            plt.savefig(folder_path + str(round(test_accuracy, 2)) + filename + "/spins.png")
     
     if first:
         # if there isn't anything with the same name we create the new folder and save the plots
         if not exists:
-            os.makedirs("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename)
-            plt.savefig("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename + "/spins.png")
+            os.makedirs(folder_path + str(round(test_accuracy, 2)) + filename)
+            plt.savefig(folder_path + str(round(test_accuracy, 2)) + filename + "/spins.png")
             first = False
     else:
-        plt.savefig("../output/pred_plots/" + str(round(test_accuracy, 2)) + filename + "/spins.png")
+        plt.savefig(folder_path + str(round(test_accuracy, 2)) + filename + "/spins.png")
