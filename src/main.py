@@ -104,7 +104,7 @@ for train_index, valid_index in kfold.split(X_train, y_train):
 
     n_layers = 3
     # generally 10 to 512 units
-    n_units = 350
+    n_units = 10
     n_units2 = 128
     n_units3 = 128
     n_units4 = 128
