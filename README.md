@@ -1,2 +1,3 @@
-# computational-aspects-of-machine-learning-project-3
-Neural network to distinguish between glitches and injections
+# Ameliorating Glitches in Gravitational-Wave Searches for Intermediate-Mass Black Holes
+
+In this repository, you can find all of the code and results for the paper titled "Ameliorating Glitches in Gravitational-Wave Searches for Intermediate-Mass Black Holes".
