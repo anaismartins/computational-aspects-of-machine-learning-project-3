@@ -32,7 +32,7 @@ from prediction_plots import prediction_plots
 
 
 # DEFINE DETECTOR ----------------------------------------------------------------------------------------
-detector = "H1"
+detector = "V1"
 binary = True
 
 
@@ -102,7 +102,7 @@ for train_index, valid_index in kfold.split(X_train, y_train):
 
     a = "ReLU"
 
-    n_layers = 3
+    n_layers = 2
     # generally 10 to 512 units
     n_units = 10
     n_units2 = 128
@@ -110,8 +110,8 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     n_units4 = 128
 
     # model needs to be called in the loop to reset the weights
-    #model = Perceptron(num_classes)
-    #m = "Perceptron"
+    model = Perceptron(num_classes)
+    m = "Perceptron"
     #model = OneLayer(num_classes, n_units, a)
     #m = "OneLayer"
     #model = TwoLayers(num_classes, n_units, n_units2, a)
@@ -120,8 +120,8 @@ for train_index, valid_index in kfold.split(X_train, y_train):
     #m = "ThreeLayers"
     #model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
     #m = "FourLayers"
-    model = VariableNet(num_classes, n_units, n_layers, a)
-    m = "VariableNet"
+    #model = VariableNet(num_classes, n_units, n_layers, a)
+    #m = "VariableNet"
 
     # LOSS AND OPTIMIZER ---------------------------------------------------------------------------------
     # initial learning rate
