@@ -14,17 +14,17 @@ class ThreeLayers(nn.Module):
 
         if a == "ReLU":
             self.activation = nn.ReLU
-
-        self.output = nn.Sequential(
-            nn.Linear(6, n_units1),
-            self.activation(),
-            nn.Linear(n_units1, n_units2),
-            self.activation(),
-            nn.Linear(n_units2, n_units3),
-            self.activation(),
-            nn.Linear(n_units3, num_classes)
-        )
+        
+        self.linear1 = nn.Sequential(nn.Linear(6, n_units1), self.activation())
+        self.linear2 = nn.Sequential(nn.Linear(n_units1, n_units2), self.activation())
+        self.linear3 = nn.Sequential(nn.Linear(n_units2, n_units3), self.activation())
+        self.linear4 = nn.Sequential(nn.Linear(n_units3, num_classes))
     
     def forward(self, x):
-        x = self.output(x)
+
+        x = self.linear1(x)
+        x = self.linear2(x)
+        x = self.linear3(x)
+        x = self.linear4(x)
+
         return x

@@ -72,8 +72,8 @@ def iterateClusters(file_name, path):
                  'Cluster ID', 'Cluster time', 'Template ID']
     dest = '/home/melissa.lopez/GlitchBank/LargeAnalysis/O3aGB/AvDataFrames/'  # FIXME
     cluster_id, cluster_time = list(), list()
+    
     k = 0
-
     for group_name, df_group in df_:
 
         # Store Cluster ID and Cluster time

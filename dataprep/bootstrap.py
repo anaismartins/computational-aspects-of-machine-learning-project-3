@@ -4,7 +4,7 @@ import pandas as pd
 import argparse
 
 
-def bootstrap(glitch):
+def bootstrap(glitch, biggest):
     """
     Bootstraps the data to make it the same size as the biggest dataset
     :param glitch: the dataset to be bootstrapped
@@ -73,11 +73,11 @@ else:
                   len(lowfreqs), len(tomtes),
                   len(whistles))
 
-blip_boot, koyfish_boot = bootstrap(blips), bootstrap(koyfishes)
-lowfreq_boot, tomte_boot = bootstrap(lowfreqs), bootstrap(tomtes)
-whistle_boot = bootstrap(whistles)
+blip_boot, koyfish_boot = bootstrap(blips, biggest), bootstrap(koyfishes, biggest)
+lowfreq_boot, tomte_boot = bootstrap(lowfreqs, biggest), bootstrap(tomtes, biggest)
+whistle_boot = bootstrap(whistles, biggest)
 if detector != "V1":
-    fast_scattering_boot = bootstrap(fast_scatterings)
+    fast_scattering_boot = bootstrap(fast_scatterings, biggest)
 
 # making the injection dataset the same size as the biggest dataset
 injection_boot = injections[0:round(biggest / 100) * 100]

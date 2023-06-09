@@ -41,10 +41,10 @@ lr_decay_factor = 0.9
 lr_decay_patience = 100
 max_epochs = 200000
 a = "ReLU"
-n_layers = 2
-n_units = 10  # generally 10 to 512 units
-n_units2 = 128
-n_units3 = 128
+n_layers = 3
+n_units = 350  # generally 10 to 512 units
+n_units2 = 350
+n_units3 = 350
 n_units4 = 128
 
 # LOAD DATA AND SPLIT INTO TRAIN AND TEST ------------------------------------
@@ -61,6 +61,7 @@ class_weights = torch.ones(num_classes, dtype=torch.float)
 loss_fn = nn.CrossEntropyLoss(weight=class_weights)
 
 # Pre-processing
+print(data.shape)
 X, y = data[:, :-1], data[:, -1]
 X = torch.tensor(X, dtype=torch.float)
 y = torch.tensor(y, dtype=torch.long)
@@ -95,14 +96,14 @@ for train_index, valid_index in kfold.split(X_train, y_train):
 
     # model needs to be called in the loop to reset the weights
     # FIXME: not sure if this should be called in loop
-    model = Perceptron(num_classes)
-    m = "Perceptron"
+    #model = Perceptron(num_classes)
+    #m = "Perceptron"
     # model = OneLayer(num_classes, n_units, a)
     # m = "OneLayer"
     # model = TwoLayers(num_classes, n_units, n_units2, a)
     # m = "TwoLayers"
-    # model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
-    # m = "ThreeLayers"
+    model = ThreeLayers(num_classes, n_units, n_units2, n_units3, a)
+    m = "ThreeLayers"
     # model = FourLayers(num_classes, n_units, n_units2, n_units3, n_units4, a)
     # m = "FourLayers"
     # model = VariableNet(num_classes, n_units, n_layers, a)
