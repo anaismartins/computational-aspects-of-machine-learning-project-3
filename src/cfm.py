@@ -5,7 +5,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector, binary):
+plt.rcParams['figure.figsize'] = [8, 6]
+plt.rcParams['axes.labelsize'] = 14
+plt.rcParams['legend.fontsize'] = 15
+plt.rcParams['xtick.labelsize'] = 15
+plt.rcParams['ytick.labelsize'] = 15
+plt.rcParams['axes.titlesize'] = 16
+plt.rcParams['figure.dpi'] = 100
+plt.style.use("seaborn-colorblind")
+
+
+def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector, binary, tw):
     """
     function that plots the confusion matrix and saves it in the output folder
     
@@ -55,9 +65,9 @@ def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector, bi
     filename = filename + ".png"
 
     if not binary:
-        folder_path = "../output/cfms/"
+        folder_path = "../output/"+str(tw)+"/cfms/"
     else:
-        folder_path = "../output/cfms/binary/"
+        folder_path = "../output/"+str(tw)+"/cfms/binary/"
 
     # getting the directory to store the confusion matrix
     dir_list = os.listdir(folder_path)

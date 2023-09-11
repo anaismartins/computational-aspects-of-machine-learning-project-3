@@ -14,6 +14,8 @@ from ThreeLayers import ThreeLayers
 from FourLayers import FourLayers
 from torch_utils import train_model, save_model
 from utils import plot_results, cfm, filename, prediction_plots
+from datetime import datetime
+
 
 # DEFINE DETECTOR --------------------------------------------------
 parser = argparse.ArgumentParser()
@@ -27,11 +29,12 @@ parser.add_argument('--detector', metavar='1', type=str,
 # Define arguments
 args = parser.parse_args()
 path = args.path
+tw = str(path.split('/')[-2][2:])  # define time window
 run = args.run
 detector = args.detector
 binary = False
 k = 9  # k-fold cross validation
-
+print('Start time:', datetime.now())
 # Define model params
 num_batches = 10  # num batches epoch
 lr = 1e-3
@@ -137,11 +140,13 @@ for train_index, valid_index in kfold.split(X_train, y_train):
         best_accuracy = valid_accuracies[-1]
 
     fold += 1
+    
 
 # FINAL ACCURACY -------------------
 av_test_accuracy = 0
 # FIXME: I think list.sum()/k will do instead of the loop
 for i in range(0, k):
+
     av_test_accuracy += all_test_accuracies[i]
 av_test_accuracy = av_test_accuracy/k
 accuracy_error = 3 * np.std(all_test_accuracies) / np.sqrt(k)
@@ -167,15 +172,20 @@ filename = filename(m, detector, a, l, o, lr,
                     final_epoch, num_batches,
                     n_layers, n_units, n_units2, n_units3, n_units4)
 
-prediction_plots(X_test, y_test, av_pred_labels,
-                 num_classes, filename, av_test_accuracy, binary)
 size = len(y_train) / num_classes
 
 cfm(y_test, av_pred_labels, filename, av_test_accuracy,
-    size, num_classes, detector, binary)
-
-plot_results(all_training_accuracies, all_valid_accuracies,
+    size, num_classes, detector, binary, tw)
+print('potato')
+storeFolder = plot_results(all_training_accuracies, all_valid_accuracies,
              all_train_loss, all_valid_loss,
-             av_test_accuracy, k, filename, binary)
+             av_test_accuracy, k, filename, binary, tw)
+summary = [all_training_accuracies, all_valid_accuracies, all_train_loss, all_valid_loss, all_test_accuracies, all_final_epochs]
+np.save(storeFolder + filename + 'summary.npy', summary)
+print(storeFolder + filename + '_summary.npy')
 
-save_model(best_model, av_test_accuracy, filename, binary)
+
+prediction_plots(X_test, y_test, av_pred_labels,
+                 num_classes, filename, av_test_accuracy, binary, storeFolder)
+
+save_model(best_model, av_test_accuracy, filename, binary, tw)

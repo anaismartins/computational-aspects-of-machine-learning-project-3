@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+import os
 
 def train_model(train_dataloader, valid_dataloader, test_dataloader, model, loss_fn, optimizer, lr_scheduler, epochs = 200):
     """
@@ -92,7 +93,7 @@ def train_model(train_dataloader, valid_dataloader, test_dataloader, model, loss
 
     return test_pred_labels, train_accuracies, valid_accuracies, train_loss, valid_loss, test_accuracy, final_epoch, model
 
-def save_model(model, test_accuracy, filename, binary):
+def save_model(model, test_accuracy, filename, binary, tw):
     """
     function that saves the model in the output folder
     :param model: the model (string of the model name)
@@ -101,9 +102,9 @@ def save_model(model, test_accuracy, filename, binary):
     """    
 
     if not binary:
-        folder_path = "../output/models/"
+        folder_path = "/data/gravwav/lopezm/Projects/GlitchBank/computational-aspects-of-machine-learning-project-3/output/tw"+str(tw)+"/results/"
     else:
-        folder_path = "../output/models/binary/"
+        folder_path = "/data/gravwav/lopezm/Projects/GlitchBank/computational-aspects-of-machine-learning-project-3/output/tw"+str(tw)+"/results/binary/"
 
     dir_list = os.listdir(folder_path)
     
