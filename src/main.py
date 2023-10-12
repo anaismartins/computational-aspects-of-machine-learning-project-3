@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 import torch
 from torch import nn
+import torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader
 import torch.optim.lr_scheduler as lr_scheduler
 from Perceptron import Perceptron
@@ -15,8 +16,9 @@ from FourLayers import FourLayers
 from torch_utils import train_model, save_model
 from utils import plot_results, cfm, filename, prediction_plots
 from datetime import datetime
+from sklearn.preprocessing import MinMaxScaler
 
-
+torch.set_printoptions(sci_mode=False)
 # DEFINE DETECTOR --------------------------------------------------
 parser = argparse.ArgumentParser()
 parser.add_argument('--path', metavar='1', type=str,
@@ -66,8 +68,10 @@ loss_fn = nn.CrossEntropyLoss(weight=class_weights)
 # Pre-processing
 print(data.shape)
 X, y = data[:, :-1], data[:, -1]
+
 X = torch.tensor(X, dtype=torch.float)
 y = torch.tensor(y, dtype=torch.long)
+#y = F.one_hot(y, num_classes=7)  # One-hot-encoding
 X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                     test_size=0.1,
                                                     random_state=42)

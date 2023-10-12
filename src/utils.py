@@ -7,7 +7,8 @@ import os
 import matplotlib.gridspec as gridspec
 import shutil
 from datetime import datetime
-
+from gwpy.timeseries import TimeSeries
+from matplotlib.ticker import ScalarFormatter
 
 def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector, binary, tw):
     """
@@ -51,9 +52,9 @@ def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector, bi
     filename = filename + ".png"
 
     if not binary:
-        folder_path = "/data/gravwav/lopezm/Projects/GlitchBank/computational-aspects-of-machine-learning-project-3/output/tw"+str(tw)+"/results/"
+        folder_path = "/data/gravwav/lopezm/Projects/GlitchBank/computational-aspects-of-machine-learning-project-3/output_new/tw"+str(tw)+"/results/"
     else:
-        folder_path = "/data/gravwav/lopezm/Projects/GlitchBank/computational-aspects-of-machine-learning-project-3/output/tw"+str(tw)+"/results/binary/"
+        folder_path = "/data/gravwav/lopezm/Projects/GlitchBank/computational-aspects-of-machine-learning-project-3/output_new/tw"+str(tw)+"/results/binary/"
 
     # getting the directory to store the confusion matrix
     dir_list = os.listdir(folder_path)
@@ -157,9 +158,9 @@ def plot_results(train_accuracies, valid_accuracies, train_loss, valid_loss, tes
     """
 
     if not binary:
-        folder_path = "/data/gravwav/lopezm/Projects/GlitchBank/computational-aspects-of-machine-learning-project-3/output/tw"+str(tw)+"/results/"
+        folder_path = "/data/gravwav/lopezm/Projects/GlitchBank/computational-aspects-of-machine-learning-project-3/output_new/tw"+str(tw)+"/results/"
     else:
-        folder_path = "/data/gravwav/lopezm/Projects/GlitchBank/computational-aspects-of-machine-learning-project-3/output/tw"+str(tw)+"/results/binary/"
+        folder_path = "/data/gravwav/lopezm/Projects/GlitchBank/computational-aspects-of-machine-learning-project-3/output_newoutput/tw"+str(tw)+"/results/binary/"
     print(folder_path, 'End time:', datetime.now())
     # ACCURACY --------------------------------------------------------------------------------------------------
     for i in range(0, k):
@@ -260,5 +261,62 @@ def prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, test
 
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.savefig(storeFolder + "/spins.png")
-        
-        
+
+def prepareKnown(tw, ifo, run):
+    path_known = '/data/gravwav/lopezm/Projects/GlitchBank/new_boostrapped/tw'+str(tw)+'/'
+    data_known = 'dataset_all_'+ifo+'_bootstrap_'+run+'.npy'
+    data = np.load(path_known + data_known)
+    df = pd.DataFrame(data, columns=['SNR', 'Chisq', 'Mass_1', 'Mass_2', 'Spin1z', 'Spin2z', 'Class'])
+    return data[:, :-1], df
+
+def prepareUnknown(tw, ifo):
+    path_unknown = '/data/gravwav/lopezm/Projects/GlitchBank/unknown_data/'
+    data_unknown = 'features_unknown_'+ifo+'_'+str(tw)+'.csv'
+    times_unknown = 'times_unknown_'+ifo+'_'+str(tw)+'.csv'
+    du = pd.read_csv(path_unknown + data_unknown)
+    du = du.loc[:, ~du.columns.str.match('Unnamed')]
+    dt = pd.read_csv(path_unknown + times_unknown)
+    dt = dt.loc[:, ~dt.columns.str.match('Unnamed')]
+    dt.columns = ['Cluster ID', 'Cluster time']
+    
+    data = du
+    gpstimes = dt
+    
+    data_ = data.to_numpy()
+    
+    return data_, data, gpstimes
+
+def QScanht(start, end, ifo):
+    scratch = 2
+    srate = 4096.
+    background = TimeSeries.fetch_open_data(ifo,
+                                            start-1,
+                                            end+1,
+                                            sample_rate=srate)
+    #print(background.times[0] - background.times[-1])
+    q_scan = background.q_transform(qrange=[4,64], frange=[10, 2048],
+                              tres=0.002, fres=0.5, whiten=True)
+    return q_scan
+
+def plot(q_scan, start, end, time, gw190521=False):
+    c = 'tomato'
+
+    fig,ax = plt.subplots(dpi=120)
+    #print(start, end, tmp_time)
+    ax.imshow(q_scan[100:-100], cmap='viridis')
+    ax.set_yscale('log', base=2)
+    ax.set_xscale('linear')
+    ax.set_ylabel('Frequency (Hz)', fontsize=14)
+    ax.set_xlabel('Time (s)', labelpad=0.1,  fontsize=14)
+    ax.yaxis.set_major_formatter(ScalarFormatter())
+    ax.tick_params(axis ='both', which ='major', labelsize = 14)
+    ax.axvline(start, c='tomato', label=r'$t_{min}$', linewidth=1, alpha=0.8)
+    ax.axvline(end, c='orchid', label=r'$t_{max}$', linewidth=1, alpha=0.8)
+    ax.axvline(time, c='crimson', label=r'$t_{cluster}$', linewidth=1, alpha=0.8)
+    cb = ax.colorbar(label='Normalized energy',clim=[0, 25.5])
+    if gw190521:
+        ax.axvline(1242442967.4, c='black', label=r'$GW190521$', linewidth=1, alpha=0.8)
+    #ax2.legend(bbox_to_anchor=(0.5, 1.2), ncol=3)
+    plt.tight_layout()
+    plt.show()
+    
