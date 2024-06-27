@@ -7,7 +7,7 @@ import os
 import matplotlib.gridspec as gridspec
 import shutil
 from datetime import datetime
-from gwpy.timeseries import TimeSeries
+#from gwpy.timeseries import TimeSeries
 from matplotlib.ticker import ScalarFormatter
 
 def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector, binary, tw):
@@ -36,6 +36,7 @@ def cfm(y, pred_labels, filename, test_accuracy, size, num_classes, detector, bi
     for i in range(0, len(cf_matrix)):
         summ = np.sum(cf_matrix[i])
         for j in range(0, len(cf_matrix[0])):
+            print(cf_matrix[i][j])
             cf_matrix[i][j] = float(float(cf_matrix[i][j]) / float(summ) * 100)
             aux.append(str(cf_matrix[i][j]) + "%")
         labels.append(aux)
@@ -262,12 +263,16 @@ def prediction_plots(X_test, y_test, av_pred_labels, num_classes, filename, test
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.savefig(storeFolder + "/spins.png")
 
-def prepareKnown(tw, ifo, run):
+def prepareKnown(tw, ifo, run, dogs=True):
     path_known = '/data/gravwav/lopezm/Projects/GlitchBank/new_boostrapped/tw'+str(tw)+'/'
-    data_known = 'dataset_all_'+ifo+'_bootstrap_'+run+'.npy'
+    if dogs:
+        data_known = 'dataset_all_'+ifo+'_bootstrap_'+run+'.npy'
+    else:
+        data_known = 'dataset_nodogs_all_'+ifo+'_bootstrap_'+run+'.npy'
+    print(path_known + data_known)
     data = np.load(path_known + data_known)
-    df = pd.DataFrame(data, columns=['SNR', 'Chisq', 'Mass_1', 'Mass_2', 'Spin1z', 'Spin2z', 'Class'])
-    return data[:, :-1], df
+    df = pd.DataFrame(data, columns=['SNR', 'Chisq', 'Mass_1', 'Mass_2', 'Spin1z', 'Spin2z', 'Class', 'Num_triggers'])
+    return data[:, :-2], df
 
 def prepareUnknown(tw, ifo):
     path_unknown = '/data/gravwav/lopezm/Projects/GlitchBank/unknown_data/'
@@ -277,8 +282,7 @@ def prepareUnknown(tw, ifo):
     du = du.loc[:, ~du.columns.str.match('Unnamed')]
     dt = pd.read_csv(path_unknown + times_unknown)
     dt = dt.loc[:, ~dt.columns.str.match('Unnamed')]
-    dt.columns = ['Cluster ID', 'Cluster time']
-    
+    dt.columns = ['Num triggers', 'Cluster ID', 'Cluster time']
     data = du
     gpstimes = dt
     

@@ -1,7 +1,8 @@
 import torch
 from torch import nn
 import os
-from ThreeLayers import ThreeLayers
+from src.ThreeLayers import ThreeLayers
+#from ThreeLayers import ThreeLayers
 from torch.utils.data import TensorDataset, DataLoader
 import numpy as np
 
@@ -169,7 +170,7 @@ def predictions(data, model):
         # Forward pass
         pred = model(x_)
         # get the predicted labels from the probabilities
-        y_pred = nn.Softmax(dim=1)(pred)
-        pred_labels = torch.argmax(y_pred, dim = 1) 
-    return y_pred.detach().numpy(), pred_labels.detach().numpy()
+        y_pred = pred#nn.Softmax(dim=1)(pred)
+        #pred_labels = torch.argmax(y_pred, dim = 1) 
+    return y_pred.detach().numpy()#, pred_labels.detach().numpy()
 
