@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap, Normalize
 from matplotlib.cm import ScalarMappable
 from sklearn import metrics
+from gwpy.timeseries import TimeSeries
+from matplotlib.ticker import ScalarFormatter
 
 class Plotting:
     def __init__(self):
@@ -146,7 +148,8 @@ class Plotting:
         plt.xlabel(r'$-\log{(1 - \bar{P}_{inj})}$')
         plt.ylabel(ylabel)
         plt.legend()
-
+        
+    @staticmethod
     def FineTuneBKG(all_tmps, bkg, ifos, t_search, t_bkg, xlabel):
         binning = Binning()
         # Generate some random data for demonstration
@@ -215,3 +218,25 @@ class Plotting:
         plt.savefig(path_img +'roc_'+name+'_'+ifos+'.pdf')
         plt.show()
         return sigma13, auc
+
+    @staticmethod
+    def plotSpect2coinc(ifo1, ifo2, t1, t2, tw=2):
+        fig, ax = plt.subplots(1, 2, dpi=120, figsize=(10, 6))
+        for i, ifo, t_star in zip([0, 1], [ifo1, ifo2], [t1, t2]):
+            strain = TimeSeries.fetch_open_data(ifo, t_star - tw, t_star + tw)
+            # Perform q-transform
+            q_scan = strain.q_transform(qrange=[4, 64], frange=[10, 2048],
+                                     tres=0.002, fres=0.5, whiten=True)
+    
+            # Plot spectrogram
+            ax[i].imshow(q_scan, cmap='viridis',label=ifo)
+            ax[i].axvline(t_star, c='crimson', alpha=0.5, linewidth=0.5)
+            ax[i].set_yscale('log', base=2)
+            ax[i].set_xscale('linear')
+            ax[0].set_ylabel('Frequency (Hz)', fontsize=14)
+            ax[i].yaxis.set_major_formatter(ScalarFormatter())
+            ax[i].title.set_text(str(t_star))
+            ax[i].colorbar(clim=[0, 25.5])
+            ax[1].grid(True)
+            ax[1].set_yticklabels([])
+        plt.show()

@@ -34,3 +34,25 @@ def rename_columns(col, sub_old, sub_new):
     if col.endswith(sub_old):
         return col[:-len(sub_old)] + sub_new
     return col
+
+def remove_little_dogs(catalog, bkg, ifo, offset = 0.1):
+    ids = []
+    for c in range(len(catalog)):
+        t_star = catalog.iloc[c]['GPS']
+        if len(ifo) == 4: 
+            ifo1, ifo2 = ifo[:2], ifo[2:]
+            ifo_list = [ifo1, ifo2]
+        if len(ifo) == 6:
+            ifo1, ifo2, ifo3 = ifo[:2], ifo[2:4], ifo[4:]
+            ifo_list = [ifo1, ifo2, ifo3]
+
+        for i in ifo_list:
+            cond1 = (bkg['Cluster time old_' + i] >= t_star - offset)
+            cond2 = (bkg['Cluster time old_' + i] <= t_star + offset)
+            tmp = bkg[cond1 & cond2]
+            if len(tmp)>0:
+                #print(i)
+                #display(tmp[['Pinj_'+ifo1, 'Pinj_'+ifo2, 'rank_stat_'+ifo]])
+                ids.append(tmp.index.values[0])
+    ids = np.unique(ids)
+    return bkg.drop(ids)

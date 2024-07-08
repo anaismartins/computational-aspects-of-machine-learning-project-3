@@ -26,13 +26,7 @@ runs = args.runs # run number
 n = args.n # run number
 inner_runs = runs + 1 * np.arange(n) # ID of run
 cp = ClusterProcessor()
-# if not zero_lag:
-#     path_store = path + 'runs/background/results/'
-#     sls = np.linspace((runs + 1) * 3, (runs + n) * 3, n)  # L shifts
-#     svs = np.linspace((runs + 1) * 3, (runs + n) * 3, n) + 6# V shifts
-# else:
-#     path_store = path + 'runs/zero_lag/'
-#     sls, svs = [0], [0]
+
 print(zero_lag, 'zero_lag')
 
 dp = DataProcessor(path + 'computational-aspects-of-machine-learning-project-3/output_new/tw0.05/predictions/', path + 'runs/zero_lag/', path + 'runs/injections')
@@ -56,16 +50,17 @@ else:
     dL1s_fix['Cluster time old'] = dL1['Cluster time']
     dV1s['Cluster time old'] = dV1s['Cluster time']
 
-for run, sl, sv in zip(inner_runs, sls, svs):
+for run in inner_runs:
 
     start = time.time()
-    print(run, sl, sv)
+    
     # We read the data
     if not zero_lag:
         sh, sl, sv = timeslides['slideH'].iloc[run], timeslides['slideL'].iloc[run], timeslides['slideV'].iloc[run]
         dL1s, dV1s = dp.shiftedDataSet(dL1, window=sl), dp.shiftedDataSet(dV1, window= sv)
     else:
         sh, sl, sv = 0, 0, 0 
+    print(run, sl, sv)
     # For each iteration we copy from original zero lag or time shifted data
     var, tmp1, tmp2 = dH1s.copy(), dL1s.copy(), dV1s.copy()
     print('H L V', len(var), len(tmp1), len(tmp2))
@@ -87,9 +82,9 @@ for run, sl, sv in zip(inner_runs, sls, svs):
         V2.append(v2); T1.append(t1); T2.append(t2);
         H4.append(h4); L4.append(l4); V4.append(v4)
         T13.append(t13); T23.append(t23); T33.append(t33)
-
+    
     triggersHL = cp.mergeData2(var, tmp1, H1, L1, ['_H1', '_L1'])
-
+    print(len(triggersHL), sum(1 for item in L1 if isinstance(item,(int, float)) and item is not None), 'numerical values')
     triggersHV = cp.mergeData2(var, tmp2, H2, V2, ['_H1', '_V1'])
 
     triggersHLV = cp.mergeData3(var, tmp1, tmp2, H4, L4, V4)

@@ -41,15 +41,14 @@ if ifos == 'H1L1V1': t_search = 0.5619617579908676
 # Call the background
 t_bkg, bkg = merge.mergeTriggers(ifos) # FIXME
 
-
 aucs_snr, aucs_m = [], []
 
-#for xlabel, auc_list, name in product([r'$SNR$', r'$\Delta m$'],
-#                                      [aucs_snr, aucs_m], ['snr', 'mass']):
-for xlabel, auc_list, name in product([r'$SNR$'],
-                                      [aucs_snr], ['snr']): 
+for xlabel, auc_list, name in zip([r'$SNR$', r'$\Delta m$'],
+                                      [aucs_snr, aucs_m], ['snr', 'mass']):
+#for xlabel, auc_list, name in product([r'$SNR$'],
+#                                      [aucs_snr], ['snr']): 
     tprs, fprs, aucs, vetoes = BackgroundFineTuner(ifos,
                                                    t_search, t_bkg).fine_tune_bkg(inj,
                                                                                   bkg, xlabel)
     auc_list.append(aucs)
-np.save('./closedbox/aucs/auc_'+ifos+'_'+name+'.csv')
+np.save('./closedbox/aucs/auc_'+ifos+'_'+name+'.csv', auc_list)

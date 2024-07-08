@@ -31,11 +31,7 @@ class BackgroundFineTuner:
                 return CoincMass(signal, self.IFOS_CONFIG_6, s1, s1).filterCoincMass()
         return signal
 
-    def calculate_tprs_fprs(self, binning, pos, neg, xlabel):
-        print(neg.columns)
-
-        x, y_obs, _, _ = Measure.getFARandThreshold(neg, self.ifos,
-                                                    self.t_bkg, self.t_search, FAR=0.1)
+    def calculate_tprs_fprs(self, binning, pos, neg):
 
         tprs, fprs = [], []
         for d in self.dt:
@@ -75,7 +71,7 @@ class BackgroundFineTuner:
         all_tmps = all_tmps.dropna(subset=columns_to_check)
         
         binning = Binning() # FIXME 3.9
-        vetoes = [None] + (np.arange(6, 3.9, -0.1).tolist() if xlabel == r'$SNR$' else np.arange(100, 5, -5).tolist())
+        vetoes = [None] + (np.arange(7, 3.9, -0.1).tolist() if xlabel == r'$SNR$' else np.arange(300, 5, -5).tolist())
         fprs, tprs, aucs = [], [], []
         
         for v in vetoes:
@@ -85,7 +81,7 @@ class BackgroundFineTuner:
                 pos = self.apply_veto(all_tmps.copy(), xlabel, v)
                 neg = self.apply_veto(bkg.copy(), xlabel, v)
                 
-            tpr, fpr = self.calculate_tprs_fprs(binning, pos, neg, xlabel)
+            tpr, fpr = self.calculate_tprs_fprs(binning, pos, neg)
 
             tprs.append(tpr)
             fprs.append(fpr)

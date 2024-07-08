@@ -95,17 +95,6 @@ class DataProcessor:
 
 
     def shiftedDataSet(self, tmp, window):
-        # Find the minimum value in the 'Cluster time' column
-        min_time = min(tmp['Cluster time'].values)
-
-        # Determine the last index where 'Cluster time' is less than (min_time + window)
-        last_id = tmp.loc[tmp['Cluster time'] <= min_time + window].index[-1] + 1
-        
-        # Concatenate the DataFrame by shifting the rows based on last_id
-        # Essentially, it moves the rows before last_id to the end
-        #tmp = pd.concat([tmp[last_id:], tmp[:last_id]])
-        tmp = tmp[last_id:] # I don't do a circular time-shift
-        
         # Rename the 'Cluster time' column to 'Cluster time old'
         tmp.rename(columns={'Cluster time': 'Cluster time old'}, inplace=True)
         

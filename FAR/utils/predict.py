@@ -61,3 +61,54 @@ def predictFeatures(path_to_file, ifos, types):
             inj_df['injSNR'+ifo3] = np.sqrt(inj_df[i1]**2 + inj_df[i2]**2 + inj_df[i3]**2)
             
     return inj_df
+
+def RankStat(data, ifos, formula):
+    def calculate_rank_stat_1(data, ifos):
+        #'P_{inj}/(\xi^2/SNR^2)'
+
+        rank_values = [
+            data[f'Pinj_{ifo}'] / (data[f'Chisq_max_{ifo}'] / data[f'SNR_max_{ifo}']**2)
+            for ifo in ifos
+        ]
+        return len(ifos) / sum(1 / rank for rank in rank_values)
+
+    def calculate_rank_stat_2(data, ifos):
+        #'P_{inj}/(SNR^2)'
+
+        rank_values = [
+            data[f'Pinj_{ifo}'] / data[f'SNR_max_{ifo}']**2
+            for ifo in ifos
+        ]
+        return len(ifos) / sum(1 / rank for rank in rank_values)
+    
+    def calculate_rank_stat_3(data, ifos):
+        #'P_{inj} * (\xi^2/SNR^2)/e^(-SNR^2)'
+
+        rank_values = [
+            data[f'Pinj_{ifo}'] * (data[f'Chisq_max_{ifo}'] / data[f'SNR_max_{ifo}']**2) / np.exp(-data[f'SNR_max_{ifo}'])
+            for ifo in ifos
+        ]
+        return len(ifos) / sum(1 / rank for rank in rank_values)
+
+    if formula == 1:
+        calculate_rank_stat = calculate_rank_stat_1
+    elif formula == 2:
+        calculate_rank_stat = calculate_rank_stat_2
+    elif formula == 3:
+        calculate_rank_stat = calculate_rank_stat_3
+    else:
+        raise ValueError("Unsupported formula")
+
+    if len(ifos) == 4:
+        ifos_subset = [ifos[:2], ifos[2:]]
+        rank_stat_1 = calculate_rank_stat(data, ifos_subset)
+        rank_stat_2 = calculate_rank_stat(data, ifos_subset)
+        rank_stat = 2 / (1 / rank_stat_1 + 1 / rank_stat_2)
+    elif len(ifos) == 6:
+        ifos_subset = ['H1', 'L1', 'V1']
+        rank_stat = calculate_rank_stat(data, ifos_subset)
+    else:
+        raise ValueError("Unsupported length of ifos")
+
+    data['rank_stat_'+ifos] = rank_stat
+    return data

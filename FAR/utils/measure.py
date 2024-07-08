@@ -282,7 +282,6 @@ class CoincMass:
 
 def SNRveto(snr_star, data, ifo):
     if len(ifo) == 2:
-        print('SNR_max_'+ifo[0], data.columns)
         cond1 = (data['SNR_max_'+ifo[0]] >= snr_star)
         cond2 = (data['SNR_max_'+ifo[1]] >= snr_star)
         data = data[cond1 & cond2]
