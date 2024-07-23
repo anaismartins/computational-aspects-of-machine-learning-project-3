@@ -15,19 +15,21 @@ parser.add_argument('--n', metavar='1', type=int,
 parser.add_argument('--zero_lag', action='store_true',
                     help='Include iff foreground')
 args = parser.parse_args()
-
-path = '/data/gravwav/lopezm/Projects/GlitchBank/'
-timeslides = pd.read_csv(path + 'computational-aspects-of-machine-learning-project-3/FAR/timeslides_1132.9y.csv')
-t_window_HV = 0.027 + 0.005 # time between H1 - V1 + fluctuations
-t_window_HL = 0.010 + 0.005 # time between H1 - V1 + fluctuations
-t_window_LV = 0.026 + 0.005 # time between H1 - V1 + fluctuations
 zero_lag = args.zero_lag
 runs = args.runs # run number
 n = args.n # run number
+print(zero_lag, 'zero_lag')
+if not zero_lag: path_store = path + 'runs/background/results/'
+else: path_store = path + 'runs/zero_lag/'
+path = '/data/gravwav/lopezm/Projects/GlitchBank/'
+timeslides = pd.read_csv(path + 'computational-aspects-of-machine-learning-project-3/FAR/timeslides_1132.9y.csv')
+
+t_window_HV = 0.027 + 0.005 # time between H1 - V1 + fluctuations
+t_window_HL = 0.010 + 0.005 # time between H1 - V1 + fluctuations
+t_window_LV = 0.026 + 0.005 # time between H1 - V1 + fluctuations
+
 inner_runs = runs + 1 * np.arange(n) # ID of run
 cp = ClusterProcessor()
-
-print(zero_lag, 'zero_lag')
 
 dp = DataProcessor(path + 'computational-aspects-of-machine-learning-project-3/output_new/tw0.05/predictions/', path + 'runs/zero_lag/', path + 'runs/injections')
 
