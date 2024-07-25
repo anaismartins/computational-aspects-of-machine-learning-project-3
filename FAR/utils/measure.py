@@ -474,7 +474,7 @@ class ClusterProcessor:
         cols2 = [col + suffixes[1] for col in data2.columns]
         cols1.extend(['Cluster idx' + suffixes[0]])
         cols2.extend(['Cluster idx' + suffixes[1]])
-        print(cols1, cols2)
+
         # Initialize matrices with NaN values
         # Object dtype is used due to different data formats within the data frame
         matrix1 = pd.DataFrame(np.full((len(idx1), len(data1.columns) + 1), np.nan), dtype=object)
@@ -499,7 +499,7 @@ class ClusterProcessor:
         df = df.dropna(subset=['rank_stat' + suffixes[0], 'rank_stat' + suffixes[1]])
         # df.rename(columns=lambda col: rename_columns(col, suffixes[0], suffixes[0].capitalize()), inplace=True)
         # df.rename(columns=lambda col: rename_columns(col, suffixes[1], suffixes[1].capitalize()), inplace=True)
-        print(df.columns)
+
 
         df['barPinj'] = Measure.harmonic2coinc(df['Pinj' + suffixes[0]], df['Pinj' + suffixes[1]])
         df = Measure.prob2stat(df, suffixes[0][1:] + suffixes[1][1:], col='barPinj')

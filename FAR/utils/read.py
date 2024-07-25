@@ -163,7 +163,7 @@ class Merge:
                 break
         return np.round(t), i
 
-    def mergeTriggers(self, ifos):
+    def mergeTriggers(self, ifos, new_stat=False):
         # We want to get the analysis time
         time_bkg, upper = self.getBKGtime(ifos)
 
@@ -178,13 +178,28 @@ class Merge:
                 tmp = pd.read_csv(file, index_col=0)
             c = c + 1
         if len(ifos) == 4:
-            tmp['barPinj'] = Measure.harmonic2coinc(tmp['Pinj_'+ifos[:2]],
-                                                        tmp['Pinj_'+ifos[2:]])
-            tmp = Measure.prob2stat(tmp, ifos[:2]+ifos[2:], col='barPinj')
+            ifo1, ifo2 = ifos[:2], ifos[2:]
+
+            if new_stat:
+                stat1 = tmp[f'Pinj_{ifo1}'] / (tmp[f'Chisq_max_{ifo1}'] / tmp[f'SNR_max_{ifo1}']**2)
+                stat2 = tmp[f'Pinj_{ifo2}'] / (tmp[f'Chisq_max_{ifo2}'] / tmp[f'SNR_max_{ifo2}']**2)
+                tmp['barPinj'] = Measure.harmonic2coinc(stat1, stat2)
+                tmp['rank_stat_'+ifo1+ifo2] = tmp['barPinj']
+            else:
+                stat1 = tmp[f'Pinj_{ifo1}']
+                stat2 = tmp[f'Pinj_{ifo2}']
+                tmp['barPinj'] = Measure.harmonic2coinc(stat1, stat2)
+                tmp = Measure.prob2stat(tmp, ifos[:2]+ifos[2:], col='barPinj')
         if len(ifos) == 6:
 
-            tmp['barPinj'] = Measure.harmonic3coinc(tmp['Pinj_H1'],
-                                                    tmp['Pinj_L1'], tmp['Pinj_V1'])
+            if new_stat:
+                stat1 = tmp[f'Pinj_H1'] / (tmp[f'Chisq_max_H1'] / tmp[f'SNR_max_H1']**2)
+                stat2 = tmp[f'Pinj_L1'] / (tmp[f'Chisq_max_L1'] / tmp[f'SNR_max_L1']**2)
+                stat3 = tmp[f'Pinj_V1'] / (tmp[f'Chisq_max_V1'] / tmp[f'SNR_max_V1']**2)
+            else:
+                stat1, stat2, stat3 = tmp[f'Pinj_H1'], tmp[f'Pinj_L1'], tmp[f'Pinj_V1']
+
+            tmp['barPinj'] = Measure.harmonic3coinc(stat1, stat2, stat3)
             tmp = Measure.prob2stat(tmp, 'H1L1V1', col='barPinj')
        
         return time_bkg, tmp.reset_index(drop=True)

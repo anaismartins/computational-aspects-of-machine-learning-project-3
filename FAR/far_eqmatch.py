@@ -19,10 +19,13 @@ zero_lag = args.zero_lag
 runs = args.runs # run number
 n = args.n # run number
 print(zero_lag, 'zero_lag')
+
+path = '/data/gravwav/lopezm/Projects/GlitchBank/'
 if not zero_lag: path_store = path + 'runs/background/results/'
 else: path_store = path + 'runs/zero_lag/'
-path = '/data/gravwav/lopezm/Projects/GlitchBank/'
-timeslides = pd.read_csv(path + 'computational-aspects-of-machine-learning-project-3/FAR/timeslides_1132.9y.csv')
+
+timeslides = pd.read_csv(path + '/git_new/computational-aspects-of-machine-learning-project-3/FAR/timeslides_1132.9y.csv')
+
 
 t_window_HV = 0.027 + 0.005 # time between H1 - V1 + fluctuations
 t_window_HL = 0.010 + 0.005 # time between H1 - V1 + fluctuations
@@ -58,6 +61,7 @@ for run in inner_runs:
     
     # We read the data
     if not zero_lag:
+        print(run)
         sh, sl, sv = timeslides['slideH'].iloc[run], timeslides['slideL'].iloc[run], timeslides['slideV'].iloc[run]
         dL1s, dV1s = dp.shiftedDataSet(dL1, window=sl), dp.shiftedDataSet(dV1, window= sv)
     else:
