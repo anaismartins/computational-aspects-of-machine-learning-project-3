@@ -97,7 +97,7 @@ def selectInProperTime(ifo, data, sh, sl, sv, run, path_store, zero_lag=False):
 
     triggers_2ptime, triggers_3ptime = data.copy(), data.copy()
     triggers_2ptime = selectProperTriggers(triggers_2ptime, pdt_2ptime, ifo[:2])
-    triggers_3ptime = selectProperTriggers(triggers_2ptime, pdt_3ptime, ifo[:2])
+    triggers_3ptime = selectProperTriggers(triggers_3ptime, pdt_3ptime, ifo[:2])
     print('original', len(data), 'double time', len(triggers_2ptime), 'tripple time', len(triggers_3ptime))
 
     if zero_lag:
