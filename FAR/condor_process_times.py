@@ -13,7 +13,7 @@ def shfile(condor_dir, namesh):
              'export PYTHONPATH=$(pwd)',
              'echo ${job_start}',
              'echo ${N}',
-             'python3 /data/gravwav/lopezm/Projects/GlitchBank/git_new/computational-aspects-of-machine-learning-project-3/FAR/computeTimes.py --job_start ${job_start} --N ${N}']
+             'python3 ./FAR/computeTimes.py --job_start ${job_start} --N ${N}']
 
     with open(condor_dir+"%s.sh" % (namesh), 'w') as f:
         f.write('\n'.join(lines))
@@ -49,7 +49,7 @@ def dagfile(condor_dir, namedag, namesub):
     for i in ids:
 
         line1 = 'JOB A%i %s' % (count, "%s.sub" % (namesub))
-        line2 = 'VARS A%i PID="%i" jobs_start="%i" N="%i"' % (count, count, int(i), N)
+        line2 = 'VARS A%i PID="%i" job_start="%i" N="%i"' % (count, count, int(i), N)
         line3 = 'RETRY A%i 3' % (count)
 
         lines.append(line1)
@@ -76,4 +76,4 @@ shfile(condor_dir, run_name + "_sh")
 os.system("chmod +x "+ condor_dir + run_name + "_sh.sh")
 print('cd '+condor_dir)
 print('condor_submit_dag '+run_name+'_dag.dag')
- --job_start $(job_start) --N $(N)',  # Ensure these match the DAG variables
+
