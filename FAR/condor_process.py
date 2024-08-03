@@ -8,9 +8,9 @@ def shfile(condor_dir, namesh):
 
     lines = ['#!/bin/bash',
              'source ~/.bashrc',
-             'conda init bash',
              'conda activate tracks_env',
-             'python3 /data/gravwav/lopezm/Projects/GlitchBank/git_new/computational-aspects-of-machine-learning-project-3/FAR/far_eqmatch.py --runs=${runs} --n=${n}']
+             'cd /data/gravwav/lopezm/Projects/GlitchBank/git_new/computational-aspects-of-machine-learning-project-3/',
+             'python3 ./FAR/far_eqmatch.py --runs=${runs} --n=${n}']
 
     with open("%s.sh" % (namesh), 'w') as f:
         f.write('\n'.join(lines))
@@ -20,7 +20,7 @@ def shfile(condor_dir, namesh):
 def subfile(condor_dir, namesh, namesub, logdir, request_memory, request_disk):
 
     lines = ['+UseOS           = "el9"',
-             '+JobCategory     = "short"',
+             '+JobCategory     = "medium"',
              'request_memory   = %i M' % (request_memory),
              'request_disk     = %i M' % (request_disk),
              'executable       = %s.sh' % (namesh),
@@ -61,13 +61,13 @@ if not os.path.exists('./logs'):
     os.mkdir('./logs')
 
 
-condor_dir = '.'
-logdir = './logs'
-request_memory   = 3000
-request_disk     = 3000
+condor_dir = '/data/gravwav/lopezm/Projects/GlitchBank/runs/background/scripts/dag/'
+logdir = condor_dir + '/logs'
+request_memory   = 10000
+request_disk     = 7000
 run_name = 'test'
-n = 2
-runs = np.arange(0, 2100, n)
+n = 25
+runs = np.arange(0, 46707, n)
 ids = np.arange(len(runs))
 
 dagfile(condor_dir, run_name + "_dag", run_name + "_sub", runs, n, ids)

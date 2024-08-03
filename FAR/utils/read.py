@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import sys
 sys.path.insert(1, '../')
-#sys.path.insert(1, '../../computational-aspects-of-machine-learning-project-3')
+sys.path.insert(1, '../../computational-aspects-of-machine-learning-project-3')
 from src.torch_utils import load_model, predictions
 from FAR.utils.measure import Measure
 

@@ -18,7 +18,7 @@ parser.add_argument('--zero_lag', action='store_true',
 args = parser.parse_args()
 
 path = '/data/gravwav/lopezm/Projects/GlitchBank/'
-timeslides = pd.read_csv(path + 'computational-aspects-of-machine-learning-project-3/FAR/timeslides_1132.9y.csv')
+timeslides = pd.read_csv(path + 'git_new/computational-aspects-of-machine-learning-project-3/FAR/timeslides_proper.csv')
 t_window_HV = 0.027 + 0.005  # time between H1 - V1 + fluctuations
 t_window_HL = 0.010 + 0.005  # time between H1 - V1 + fluctuations
 t_window_LV = 0.026 + 0.005  # time between H1 - V1 + fluctuations
@@ -34,7 +34,7 @@ else:
 
 print(zero_lag, 'zero_lag')
 
-dp = DataProcessor(path + 'computational-aspects-of-machine-learning-project-3/output_new/tw0.05/predictions/', path + 'runs/zero_lag/', path + 'runs/injections')
+dp = DataProcessor(path + 'git_new/computational-aspects-of-machine-learning-project-3/output_new/tw0.05/predictions/', path + 'runs/zero_lag/', path + 'runs/injections')
 
 # We call the frames extracted from CIT
 path_frames = '/data/gravwav/lopezm/Projects/GlitchBank/runs/frames/'
@@ -67,8 +67,9 @@ for run in inner_runs:
     
     # We read the data
     if not zero_lag:
-        sh, sl, sv = timeslides['slideH'].iloc[run], timeslides['slideL'].iloc[run], timeslides['slideV'].iloc[run]
-        dL1s, dV1s = dp.shiftedDataSet(dL1, window=sl), dp.shiftedDataSet(dV1, window=sv)
+        sh, sl, sv = timeslides['dH1s'].iloc[run], timeslides['dL1s'].iloc[run], timeslides['dV1s'].iloc[run]
+        print(sh, sl, sv, dL1.columns, dV1.columns)
+        dL1s, dV1s = dp.shiftedDataSet(dL1.copy(), window=sl), dp.shiftedDataSet(dV1.copy(), window=sv)
     else:
         sh, sl, sv = 0, 0, 0 
     print(run, sl, sv)

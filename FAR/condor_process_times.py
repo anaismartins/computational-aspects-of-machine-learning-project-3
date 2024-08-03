@@ -23,7 +23,7 @@ def shfile(condor_dir, namesh):
 def subfile(condor_dir, namesh, namesub, logdir, request_memory, request_disk):
 
     lines = ['+UseOS           = "el9"',
-             '+JobCategory     = "short"',
+             '+JobCategory     = "medium"',
              'request_memory   = %i M' % (request_memory),
              'request_disk     = %i M' % (request_disk),
              'executable       = %s.sh' % (namesh),
@@ -44,8 +44,8 @@ def dagfile(condor_dir, namedag, namesub):
 
     count = 1
     lines = list()
-    N = 12
-    ids = np.arange(1, 6100, N)
+    N = 200
+    ids = np.arange(1, 100000, N)
     for i in ids:
 
         line1 = 'JOB A%i %s' % (count, "%s.sub" % (namesub))

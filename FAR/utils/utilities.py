@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import pickle
+import os
 import sys
 sys.path.insert(1, '../')
 from FAR.utils.measure import Measure
@@ -123,3 +124,23 @@ def selectInProper3Time(ifo, data, sh, sl, sv, run, path_store, zero_lag=False):
     triggers_3ptime = data.copy()
     triggers_3ptime = selectProperTriggers(triggers_3ptime, pdt_3ptime, ifo[:2])
     triggers_3ptime.to_csv(path_store + 'triggers'+ifo.replace('1', '')+f'{zl}_run_eq_match{run}_{ifo_3ptime}.csv')
+
+def CountProperTime(path_tproper = '/data/gravwav/lopezm/Projects/GlitchBank/runs/frames/times/'):
+    """
+        This function counts the proper detector time per time slide.
+    """
+    c = 0
+    for file in os.listdir(path_tproper):
+        if 'time_background' in file:
+            tmp = np.load(path_tproper + file)
+            if c > 0:
+                tproper = np.vstack([tproper, tmp])
+            else:
+                tproper = tmp.copy()
+            c = c + 1
+    #  print(0, sl, sv, 0, thlv, thl_nv, thv_nl, tlv_nh)
+
+    tproper = pd.DataFrame(tproper, columns=['dH1s', 'dL1s', 'dV1s','dL1s_fix',
+                                             'H', 'L', 'V', 'HL_nV', 'HV_nL', 'LV_nV', 'HLV'])
+    tproper = tproper.sort_values(by=['dL1s', 'dV1s'])
+    return tproper
