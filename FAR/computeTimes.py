@@ -72,7 +72,7 @@ else:
         coinc_hlv 
         print(0, sl, sv, 0, thlv, thl_nv, thv_nl, tlv_nh)
         matrix[c, 0],  matrix[c, 1], matrix[c, 2],  matrix[c, 3], matrix[c, 4], matrix[c, 5] = 0, sl, sv, 0, th, tl
-        matrix[c, 6],  matrix[c, 7],  matrix[c, 8], matrix[c, 9], matrix[c, 10], = tv, thl_nv, thv_nl, thv_nl, thlv
+        matrix[c, 6],  matrix[c, 7],  matrix[c, 8], matrix[c, 9], matrix[c, 10], = tv, thl_nv, thv_nl, tlv_nh, thlv
         end = time.time()
         print(end - start)
     end = time.time()
