@@ -153,37 +153,58 @@ class Merge:
         self.path_store = path_store
         self.timeslides_file = timeslides_file
 
-    def getBKGtime(self, ifos):
-        tmp = pd.read_csv(self.timeslides_file)
 
+    def getBKGtime(self, ptime):
+        """
+        ptime: either Hanford, Livingston without Virgo ('HL_nV'), 
+                      Hanford, Virgo without Livingston ('HV_nL'),
+                      Livingston, Virgo without Hanford ('LV_nH'),
+                      Hanford, Livingston and Virgo ('HLV')
+        """
+        tmp = pd.read_csv(self.timeslides_file)
+        if ptime == 'HLV':
+            limit = 1000
+        else:
+            limit = 10
+        print('ptime', ptime, limit)
         t = 0 
         for i in range(len(tmp)):  # Iterate over the length of the dataframe
-            t = t + tmp['time' + ifos.replace("1", "")].iloc[i]
-            if t > 1000:
+            t = t + tmp[ptime].iloc[i]
+            if t > limit:
                 break
         return np.round(t), i
 
-    def mergeTriggers(self, ifos, new_stat=False):
+    def mergeTriggers(self, ifos, ptime, new_stat=False):
+        """
+        ifos: interferometers to analyze
+        ptime: proper detector time either Hanford, Livingston without Virgo ('HL_nV'), 
+                                           Hanford, Virgo without Livingston ('HV_nL'),
+                                           Livingston, Virgo without Hanford ('LV_nH'),
+                                           Hanford, Livingston and Virgo ('HLV')
+        """
         # We want to get the analysis time
-        time_bkg, upper = self.getBKGtime(ifos)
-
-        tmp = None  # Initialize tmp here
-        for c in range(upper):
+        time_bkg, upper = self.getBKGtime(ptime) 
+    
+        for c in range(upper + 1): 
             #file = self.path_store + f'triggers{ifos}_run{c}.csv'
-            file = self.path_store + f"triggers{ifos.replace('1', '')}_run_eq_match{c}.csv"
+            file = self.path_store + 'triggers'+ifos.replace('1', '')+f'_run_eq_match{c}_{ptime.lower()}.csv'
 
             if c != 0:
-                tmp = pd.concat([tmp, pd.read_csv(file, index_col=0)])
+                tmp_ = pd.read_csv(file, index_col=0)
+                tmp_['N_tslide'] = np.ones(len(tmp_)) * c
+                tmp = pd.concat([tmp, tmp_])
+                
             if c == 0:
                 tmp = pd.read_csv(file, index_col=0)
-            c = c + 1
+                tmp['N_tslide'] = np.ones(len(tmp)) * c
+        print(c, upper)
         if len(ifos) == 4:
             ifo1, ifo2 = ifos[:2], ifos[2:]
-
+    
             if new_stat:
                 stat1 = tmp[f'Pinj_{ifo1}'] / (tmp[f'Chisq_max_{ifo1}'] / tmp[f'SNR_max_{ifo1}']**2)
                 stat2 = tmp[f'Pinj_{ifo2}'] / (tmp[f'Chisq_max_{ifo2}'] / tmp[f'SNR_max_{ifo2}']**2)
-                tmp['barPinj'] = Measure.harmonic2coinc(stat1, stat2)
+                tmp['barPinj'] = Measure.harmonic3coinc(stat1, stat2, [0])
                 tmp['rank_stat_'+ifo1+ifo2] = tmp['barPinj']
             else:
                 stat1 = tmp[f'Pinj_{ifo1}']
@@ -191,18 +212,19 @@ class Merge:
                 tmp['barPinj'] = Measure.harmonic2coinc(stat1, stat2)
                 tmp = Measure.prob2stat(tmp, ifos[:2]+ifos[2:], col='barPinj')
         if len(ifos) == 6:
-
+    
             if new_stat:
                 stat1 = tmp[f'Pinj_H1'] / (tmp[f'Chisq_max_H1'] / tmp[f'SNR_max_H1']**2)
                 stat2 = tmp[f'Pinj_L1'] / (tmp[f'Chisq_max_L1'] / tmp[f'SNR_max_L1']**2)
                 stat3 = tmp[f'Pinj_V1'] / (tmp[f'Chisq_max_V1'] / tmp[f'SNR_max_V1']**2)
             else:
                 stat1, stat2, stat3 = tmp[f'Pinj_H1'], tmp[f'Pinj_L1'], tmp[f'Pinj_V1']
-
+    
             tmp['barPinj'] = Measure.harmonic3coinc(stat1, stat2, stat3)
             tmp = Measure.prob2stat(tmp, 'H1L1V1', col='barPinj')
        
         return time_bkg, tmp.reset_index(drop=True)
+
 class RecoveryData:
     def __init__(self, tw=0.05):
         self.tw = tw

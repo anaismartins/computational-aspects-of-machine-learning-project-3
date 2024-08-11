@@ -64,7 +64,7 @@ def dagfile(condor_dir, namedag, namesub):
 run_name = 'times_real'
 request_memory = 4000 
 request_disk = 4000
-condor_dir = '/data/gravwav/lopezm/Projects/GlitchBank/runs/frames/dag/'
+condor_dir = '_'
 logdir = condor_dir + 'logs'
 if not os.path.exists(logdir):
     os.mkdir(logdir)

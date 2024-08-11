@@ -36,9 +36,12 @@ start = time.time()
 if zerolag:
     # For zero lag we just need to check the search time
     matrix = np.empty((1, 11))
+    c = 0
+    th, tl, tv = tu.SingleCoincTime(dh), tu.SingleCoincTime(dl), tu.SingleCoincTime(dv)
     (thlv, thl_nv, thv_nl, tlv_nh, coinc_hlv,
-     coinc_hl_nv, coinc_hv_nl, coinc_lv_nh) = tu.AllCoincTime(dh, dl, dv)
-    matrix[c, 0],  matrix[c, 1], matrix[c, 2],  matrix[c, 3], matrix[c, 4], matrix[c, 5] = 0, sl, sv, 0, th, tl
+     coinc_hl_nv, coinc_hv_nl, coinc_lv_nh) = tu.AllCoincTime(dh, dl, dv, dl)
+    print(0, 0, 0, 0, thlv, thl_nv, thv_nl, tlv_nh)
+    matrix[c, 0],  matrix[c, 1], matrix[c, 2],  matrix[c, 3], matrix[c, 4], matrix[c, 5] = 0, 0, 0, 0, th, tl
     matrix[c, 6],  matrix[c, 7],  matrix[c, 8], matrix[c, 9], matrix[c, 10], = tv, thl_nv, thv_nl, thv_nl, thlv
     np.save(path + 'time_search_zerolag.npy', matrix)
 else:

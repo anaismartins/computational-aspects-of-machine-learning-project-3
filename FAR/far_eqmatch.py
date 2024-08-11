@@ -47,7 +47,7 @@ dH1, dH1_c = dp.LoadZeroLag('h1', reset=True)
 dL1, dL1_c = dp.LoadZeroLag('l1', reset=True)
 dV1, dV1_c = dp.LoadZeroLag('v1', reset=True)
 print(len(dH1), len(dL1), len(dV1))
-print(dH1.columns)
+
 print(f'We are going to do {len(inner_runs)} runs')
 
 if not zero_lag:
@@ -68,7 +68,7 @@ for run in inner_runs:
     # We read the data
     if not zero_lag:
         sh, sl, sv = timeslides['dH1s'].iloc[run], timeslides['dL1s'].iloc[run], timeslides['dV1s'].iloc[run]
-        print(sh, sl, sv, dL1.columns, dV1.columns)
+        print(sh, sl, sv)
         dL1s, dV1s = dp.shiftedDataSet(dL1.copy(), window=sl), dp.shiftedDataSet(dV1.copy(), window=sv)
     else:
         sh, sl, sv = 0, 0, 0 
@@ -87,8 +87,8 @@ for run in inner_runs:
         h2, v2, t2 = cp.coincTriggers2(i, var, tmp2, dH1_c, dV1_c, ['_H1', '_V1'], shift1=sh, shift2=sv)
 
         h4, l4, v4, t13, t23, t33 = cp.coincTriggers3(i, var, tmp1,
-                                                      tmp2, dH1_c,
-                                                      dL1_c, dV1_c, shift1=sh, shift2=sl, shift3=sv)
+                                                       tmp2, dH1_c,
+                                                       dL1_c, dV1_c, shift1=sh, shift2=sl, shift3=sv)
         H1.append(h1); L1.append(l1); H2.append(h2);
         V2.append(v2); T1.append(t1); T2.append(t2);
         H4.append(h4); L4.append(l4); V4.append(v4)
@@ -113,14 +113,10 @@ for run in inner_runs:
     end = time.time()
     print('Single iteration took ', np.round(end - start, 2), ' s')
 
-        # We define double detection in double time, and in tripple time
+    #We define double detection in double time, and in tripple time
     selectInProperTime('H1L1', triggersHL, sh, sl, sv, run, path_store, zero_lag)
     selectInProperTime('H1V1', triggersHV, sh, sl, sv, run, path_store, zero_lag)
     selectInProperTime('L1V1', triggersLV, sh, sl, sv, run, path_store, zero_lag)
     selectInProper3Time('H1L1V1', triggersHLV, sh, sl, sv, run, path_store, zero_lag)
-    # triggersHL.to_csv(path_store + f'triggersHL_run_eq_match{run}_{ptime}.csv')
-    # triggersHV.to_csv(path_store + f'triggersHV_run_eq_match{run}_{ptime}.csv')
-    # triggersLV.to_csv(path_store + f'triggersLV_run_eq_match{run}_{ptime}.csv')
-    # triggersHLV.to_csv(path_store + f'triggersHLV_run_eq_match{run}_{ptime}.csv')
     end_time = time.time()
     print("Time elapsed of one job:", end_time - start_time, "seconds")

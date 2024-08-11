@@ -50,11 +50,12 @@ class Measure:
     def harmonic3coinc(val1, val2, val3, epsilon=1e-20):
         # We need higher resolution
         # FIXME: this will need to be fixed in the NN
-        val1 = val1.astype(np.float128) + epsilon
-        val2 = val2.astype(np.float128) + epsilon
-        val3 = val3.astype(np.float128) + epsilon
 
-        harmonic = 3 / (1/val1 + 1/val2 + 1/val3)
+        if len(val3) == 1:
+            # we give 0 to say it does not contribute
+            harmonic = 3 / (1/val1 + 1/val2 + 0)
+        else:
+            harmonic = 3 / (1/val1 + 1/val2 + 1/val3)
         return harmonic
 
     @staticmethod
@@ -133,10 +134,10 @@ class Measure:
         return fpr
 
     @staticmethod
-    def getFARandThreshold(data, ifo, t_bkg, t_search, FAR=0.01):
+    def getFARandThreshold(data, ifo, t_bkg, t_search, maximum=50, FAR=0.01):
         binning = Binning()
 
-        x, y, l, p = binning.fit_and_binning(data=data['rank_stat_'+ifo], rank=2)
+        x, y, l, p = binning.fit_and_binning(data=data['rank_stat_'+ifo], maximum=maximum, rank=2)
         y_obs, ylabel = binning.yVar(y, l, 'far', t_bkg, t_search)
         p_star = Measure.FAR2stat(FAR, x, y_obs)
         return x, y_obs, p_star, ylabel
@@ -234,9 +235,9 @@ class Binning:
     def __init__(self):
         pass
     @staticmethod
-    def fit_and_binning(data, rank=None):
+    def fit_and_binning(data, maximum, rank=None):
         # Compute histogram counts and bin edges
-        bin_array = np.arange(0, 50, 0.01)  
+        bin_array = np.arange(0, maximum, 0.01)  
         counts, bins = np.histogram(data, bins=bin_array)
         cumulative_counts = np.cumsum(counts[::-1])[::-1]
         # Check thesis Eq. 3.43
@@ -260,7 +261,8 @@ class Binning:
             return y, 'Number of counts'
         if var == 'far':
             # Check Eq. 3.43 of my thesis
-            return y / (length * t_search), r'FAR (yr$^{-1}$)'
+            #return y / (length * t_search), r'FAR (yr$^{-1}$)'
+            return y / t_bkg, r'FAR (yr$^{-1}$)'
         if var == 'events':
             return y * t_search / t_bkg, 'Number of events'
 
@@ -562,6 +564,6 @@ class ClusterProcessor:
 
         df['barPinj'] = Measure.harmonic3coinc(df['Pinj_H1'], df['Pinj_L1'], df['Pinj_V1'])
         df = Measure.prob2stat(df, ifo1 + ifo2 + ifo3, col='barPinj')
-   
+        print(df[['Cluster time_H1', 'Cluster time_L1', 'Cluster time_V1']])
         return df
 

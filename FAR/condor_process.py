@@ -12,7 +12,7 @@ def shfile(condor_dir, namesh):
              'cd /data/gravwav/lopezm/Projects/GlitchBank/git_new/computational-aspects-of-machine-learning-project-3/',
              'python3 ./FAR/far_eqmatch.py --runs=${runs} --n=${n}']
 
-    with open("%s.sh" % (namesh), 'w') as f:
+    with open(condor_dir + "%s.sh" % (namesh), 'w') as f:
         f.write('\n'.join(lines))
     f.close()
 
@@ -32,7 +32,7 @@ def subfile(condor_dir, namesh, namesub, logdir, request_memory, request_disk):
              'rank             = memory',
              'queue 1']
 
-    with open("%s.sub" % (namesub), 'w') as f:
+    with open(condor_dir+ "%s.sub" % (namesub), 'w') as f:
         f.write('\n'.join(lines))
     f.close()
 
@@ -53,7 +53,7 @@ def dagfile(condor_dir, namedag, namesub, runs, n, ids):
         lines.append(line3)
 
         count += 1
-    with open("%s.dag" % (namedag), 'w') as f:
+    with open(condor_dir+ "%s.dag" % (namedag), 'w') as f:
         f.write('\n'.join(lines))
     f.close()
 
@@ -63,15 +63,15 @@ if not os.path.exists('./logs'):
 
 condor_dir = '/data/gravwav/lopezm/Projects/GlitchBank/runs/background/scripts/dag/'
 logdir = condor_dir + '/logs'
-request_memory   = 10000
+request_memory   = 25000
 request_disk     = 7000
 run_name = 'test'
-n = 25
-runs = np.arange(0, 46707, n)
+n = 2
+runs = np.arange(0, 2000, n)
 ids = np.arange(len(runs))
 
 dagfile(condor_dir, run_name + "_dag", run_name + "_sub", runs, n, ids)
 subfile(condor_dir, run_name + "_sh", run_name + "_sub", logdir, request_memory, request_disk)
 shfile(condor_dir, run_name + "_sh")
-os.system("chmod +x "+ run_name + "_sh.sh")
+os.system("chmod +x "+ condor_dir + run_name + "_sh.sh")
 print('done')

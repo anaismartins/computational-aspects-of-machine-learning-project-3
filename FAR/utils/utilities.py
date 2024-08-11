@@ -78,7 +78,6 @@ def is_within_segments(cluster_time, segments):
 
 
 def selectProperTriggers(df_clusters, df_segments, ifo):
-    print(df_clusters.columns, 'potato', 'Cluster time_'+ifo)
     # Apply the function to each row of df_clusters
     df_clusters['within_segment'] = df_clusters['Cluster time_'+ifo].apply(lambda x: is_within_segments(x, df_segments))
     df_clusters = df_clusters[df_clusters['within_segment'] == True]
@@ -99,7 +98,7 @@ def selectInProperTime(ifo, data, sh, sl, sv, run, path_store, zero_lag=False):
     triggers_2ptime, triggers_3ptime = data.copy(), data.copy()
     triggers_2ptime = selectProperTriggers(triggers_2ptime, pdt_2ptime, ifo[:2])
     triggers_3ptime = selectProperTriggers(triggers_3ptime, pdt_3ptime, ifo[:2])
-    print('original', len(data), 'double time', len(triggers_2ptime), 'tripple time', len(triggers_3ptime))
+    print(ifo, 'original', len(data), 'double time', len(triggers_2ptime), 'tripple time', len(triggers_3ptime))
 
     if zero_lag:
         zl = '_zero_lag'
@@ -131,7 +130,7 @@ def CountProperTime(path_tproper = '/data/gravwav/lopezm/Projects/GlitchBank/run
     """
     c = 0
     for file in os.listdir(path_tproper):
-        if 'time_background' in file:
+        if 'time_background_200' in file:
             tmp = np.load(path_tproper + file)
             if c > 0:
                 tproper = np.vstack([tproper, tmp])
@@ -141,6 +140,6 @@ def CountProperTime(path_tproper = '/data/gravwav/lopezm/Projects/GlitchBank/run
     #  print(0, sl, sv, 0, thlv, thl_nv, thv_nl, tlv_nh)
 
     tproper = pd.DataFrame(tproper, columns=['dH1s', 'dL1s', 'dV1s','dL1s_fix',
-                                             'H', 'L', 'V', 'HL_nV', 'HV_nL', 'LV_nV', 'HLV'])
-    tproper = tproper.sort_values(by=['dL1s', 'dV1s'])
+                                             'H', 'L', 'V', 'HL_nV', 'HV_nL', 'LV_nH', 'HLV'])
+    tproper = tproper.sort_values(by=['dL1s', 'dV1s']).reset_index(drop=True)
     return tproper
