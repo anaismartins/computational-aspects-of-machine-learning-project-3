@@ -36,11 +36,22 @@ start = time.time()
 if zerolag:
     # For zero lag we just need to check the search time
     matrix = np.empty((1, 11))
-    c = 0
+    c, sl, sv = 0, 0, 0
     th, tl, tv = tu.SingleCoincTime(dh), tu.SingleCoincTime(dl), tu.SingleCoincTime(dv)
     (thlv, thl_nv, thv_nl, tlv_nh, coinc_hlv,
      coinc_hl_nv, coinc_hv_nl, coinc_lv_nh) = tu.AllCoincTime(dh, dl, dv, dl)
     print(0, 0, 0, 0, thlv, thl_nv, thv_nl, tlv_nh)
+
+    coinc_hlv = tu.createDataFrame(coinc_hlv)
+    coinc_hl_nv = tu.createDataFrame(coinc_hl_nv)
+    coinc_hv_nl = tu.createDataFrame(coinc_hv_nl)
+    coinc_lv_nh = tu.createDataFrame(coinc_lv_nh)
+    
+    coinc_hlv.to_csv(path + f'coinc_hlv_sh0_sl{sl}_sv{sv}')
+    coinc_hl_nv.to_csv(path + f'coinc_hl_nv_sh0_sl{sl}_sv{sv}')
+    coinc_hv_nl.to_csv(path + f'coinc_hv_nl_sh0_sl{sl}_sv{sv}')
+    coinc_lv_nh.to_csv(path + f'coinc_lv_nh_sh0_sl{sl}_sv{sv}')
+    
     matrix[c, 0],  matrix[c, 1], matrix[c, 2],  matrix[c, 3], matrix[c, 4], matrix[c, 5] = 0, 0, 0, 0, th, tl
     matrix[c, 6],  matrix[c, 7],  matrix[c, 8], matrix[c, 9], matrix[c, 10], = tv, thl_nv, thv_nl, thv_nl, thlv
     np.save(path + 'time_search_zerolag.npy', matrix)

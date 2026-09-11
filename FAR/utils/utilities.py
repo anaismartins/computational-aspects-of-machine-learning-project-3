@@ -91,10 +91,12 @@ def selectInProperTime(ifo, data, sh, sl, sv, run, path_store, zero_lag=False):
     no_ifo = list(set(str2) - set(str1))[0]
     ifo_2ptime = ifo.replace('1', '').lower() + '_n' + no_ifo
     ifo_3ptime = str2
-    
+
+   
+    # Proper time
     pdt_2ptime = pd.read_csv(path_frames + f'coinc_{ifo_2ptime}_sh{int(sh)}_sl{int(sl)}_sv{int(sv)}', index_col=0)
     pdt_3ptime = pd.read_csv(path_frames + f'coinc_{ifo_3ptime}_sh{int(sh)}_sl{int(sl)}_sv{int(sv)}', index_col=0)
-
+        
     triggers_2ptime, triggers_3ptime = data.copy(), data.copy()
     triggers_2ptime = selectProperTriggers(triggers_2ptime, pdt_2ptime, ifo[:2])
     triggers_3ptime = selectProperTriggers(triggers_3ptime, pdt_3ptime, ifo[:2])

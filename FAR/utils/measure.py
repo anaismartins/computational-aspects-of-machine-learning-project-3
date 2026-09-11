@@ -237,7 +237,7 @@ class Binning:
     @staticmethod
     def fit_and_binning(data, maximum, rank=None):
         # Compute histogram counts and bin edges
-        bin_array = np.arange(0, maximum, 0.01)  
+        bin_array = np.arange(0, maximum, 0.001)  
         counts, bins = np.histogram(data, bins=bin_array)
         cumulative_counts = np.cumsum(counts[::-1])[::-1]
         # Check thesis Eq. 3.43
@@ -563,7 +563,7 @@ class ClusterProcessor:
         # df.rename(columns=lambda col: rename_columns(col, ifo3, ifo3.capitalize()), inplace=True)
 
         df['barPinj'] = Measure.harmonic3coinc(df['Pinj_H1'], df['Pinj_L1'], df['Pinj_V1'])
-        df = Measure.prob2stat(df, ifo1 + ifo2 + ifo3, col='barPinj')
+        #df = Measure.prob2stat(df, ifo1 + ifo2 + ifo3, col='barPinj')
         print(df[['Cluster time_H1', 'Cluster time_L1', 'Cluster time_V1']])
         return df
 

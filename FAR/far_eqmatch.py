@@ -113,8 +113,9 @@ for run in inner_runs:
     end = time.time()
     print('Single iteration took ', np.round(end - start, 2), ' s')
 
+    print('HL', len(triggersHL), 'HV', len(triggersHV), 'HL', len(triggersLV), 'HL', len(triggersHLV),)
     #We define double detection in double time, and in tripple time
-    selectInProperTime('H1L1', triggersHL, sh, sl, sv, run, path_store, zero_lag)
+    #selectInProperTime('H1L1', triggersHL, sh, sl, sv, run, path_store, zero_lag)
     selectInProperTime('H1V1', triggersHV, sh, sl, sv, run, path_store, zero_lag)
     selectInProperTime('L1V1', triggersLV, sh, sl, sv, run, path_store, zero_lag)
     selectInProper3Time('H1L1V1', triggersHLV, sh, sl, sv, run, path_store, zero_lag)
